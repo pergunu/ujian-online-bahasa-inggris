@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ujian Bahasa Inggris PERGUNU Situbondo</title>
+    <title>Ujian Online Bahasa Inggris PERGUNU Situbondo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
@@ -139,6 +139,7 @@
         /* Form Styles */
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .form-control {
@@ -189,6 +190,24 @@
         .checkbox-option:checked + .checkbox-label {
             background: linear-gradient(to right, var(--color-secondary), var(--color-tertiary));
             box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+        }
+
+        /* Custom Checkbox for Terms */
+        .terms-checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .terms-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            accent-color: var(--color-secondary);
+        }
+        
+        .terms-text {
+            font-size: 14px;
         }
 
         /* Animation Classes */
@@ -922,7 +941,44 @@
         .alert-danger {
             background-color: #f2dede;
             color: #a94442;
-            border: 1px solid #ebccd1;
+            border: 1px solid #ebccd1);
+        }
+
+        /* Error message styles */
+        .error-message {
+            color: var(--color-error);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Warning notification */
+        .warning-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-warning);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Input error state */
+        .input-error {
+            border-color: var(--color-error) !important;
+            background: rgba(244, 67, 54, 0.1) !important;
+        }
+
+        /* Radio group error */
+        .radio-group-error {
+            outline: 2px solid var(--color-error);
+            border-radius: 8px;
+            padding: 5px;
         }
     </style>
 </head>
@@ -930,16 +986,21 @@
     <div id="particles-js"></div>
     <div id="celebration-particles"></div>
     
+    <!-- Warning notification for incomplete form -->
+    <div class="warning-notification" id="form-warning">
+        <i class="fas fa-exclamation-circle"></i> Harap lengkapi semua data peserta dengan benar sebelum melanjutkan!
+    </div>
+    
     <div class="container">
         <!-- Welcome Screen -->
         <div id="welcome-screen" class="card slide-in">
             <div class="header">
                 <img src="https://raw.githubusercontent.com/pergunu/ujian-online/main/assets/images/logo.png" alt="PERGUNU Logo" class="logo">
-                <h1>Ujian Bahasa Inggris PERGUNU Situbondo</h1>
+                <h1>Ujian Online Bahasa Inggris PERGUNU Situbondo</h1>
             </div>
             
             <div id="greeting-message">
-                <p id="greeting-text">Selamat datang di sistem ujian bahasa Inggris online PERGUNU Situbondo. Sistem ini dirancang untuk menguji kemampuan bahasa Inggris Anda. Silakan masukkan kode login untuk melanjutkan.</p>
+                <p id="greeting-text">Selamat datang di sistem ujian online Bahasa Inggris PERGUNU Situbondo. Silakan masukkan kode login untuk melanjutkan.</p>
             </div>
             
             <div class="form-group">
@@ -966,9 +1027,9 @@
                 <p>9. Keputusan panitia ujian bersifat mutlak dan tidak dapat diganggu gugat.</p>
             </div>
             
-            <div class="form-group">
-                <input type="checkbox" id="agree-terms" class="checkbox-option">
-                <label for="agree-terms" class="checkbox-label">Saya menyetujui</label>
+            <div class="terms-checkbox-container">
+                <input type="checkbox" id="agree-terms" class="terms-checkbox" required>
+                <span class="terms-text">Saya telah membaca dan menyetujui peraturan di atas</span>
             </div>
             
             <button id="continue-btn" class="btn" disabled>Lanjut Ikut Ujian</button>
@@ -982,6 +1043,7 @@
             <div class="form-group">
                 <label for="fullname" class="form-label">Nama Lengkap</label>
                 <input type="text" id="fullname" class="form-control" placeholder="Masukkan nama lengkap" pattern="[A-Za-z ]+" title="Hanya huruf diperbolehkan" required>
+                <div class="error-message" id="fullname-error">Nama lengkap harus diisi dan hanya boleh mengandung huruf</div>
             </div>
             
             <div class="form-group">
@@ -996,17 +1058,19 @@
             <div id="student-fields">
                 <div class="form-group">
                     <label for="school-name" class="form-label">Nama Sekolah</label>
-                    <input type="text" id="school-name" class="form-control" placeholder="Masukkan nama sekolah">
+                    <input type="text" id="school-name" class="form-control" placeholder="Masukkan nama sekolah" required>
+                    <div class="error-message" id="school-error">Nama sekolah harus diisi</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="student-id" class="form-label">NIS (Nomor Induk Siswa)</label>
                     <input type="text" id="student-id" class="form-control" placeholder="Masukkan NIS" pattern="[0-9]+" title="Hanya angka diperbolehkan" required>
+                    <div class="error-message" id="nis-error">NIS harus diisi dan hanya boleh mengandung angka</div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Tujuan Ikut Ujian</label>
-                    <div class="radio-group">
+                    <div class="radio-group" id="purpose-radio-group">
                         <input type="radio" id="purpose-task" name="purpose" value="Tugas Sekolah" class="radio-option">
                         <label for="purpose-task" class="radio-label">Tugas Sekolah</label>
                         
@@ -1016,11 +1080,12 @@
                         <input type="radio" id="purpose-test" name="purpose" value="Tes dan Belajar" class="radio-option">
                         <label for="purpose-test" class="radio-label">Tes dan Belajar</label>
                     </div>
+                    <div class="error-message" id="purpose-error">Silakan pilih tujuan ikut ujian</div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Tingkat Sekolah</label>
-                    <div class="radio-group">
+                    <div class="radio-group" id="level-radio-group">
                         <input type="radio" id="level-elementary" name="level" value="SD" class="radio-option">
                         <label for="level-elementary" class="radio-label">SD</label>
                         
@@ -1030,6 +1095,7 @@
                         <input type="radio" id="level-senior" name="level" value="SMA/SMK" class="radio-option">
                         <label for="level-senior" class="radio-label">SMA/SMK</label>
                     </div>
+                    <div class="error-message" id="level-error">Silakan pilih tingkat sekolah</div>
                 </div>
             </div>
             
@@ -1040,6 +1106,7 @@
                     <div class="radio-group" id="grade-options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
+                    <div class="error-message" id="grade-error">Silakan pilih kelas</div>
                 </div>
             </div>
             
@@ -1047,10 +1114,11 @@
             <div id="subject-selection" style="display: none;">
                 <div class="form-group">
                     <label class="form-label">Pilih Jenis Ujian</label>
-                    <div class="radio-group">
+                    <div class="radio-group" id="subject-radio-group">
                         <input type="radio" id="subject-english" name="subject" value="Bahasa Inggris" class="radio-option" checked>
                         <label for="subject-english" class="radio-label">Bahasa Inggris</label>
                     </div>
+                    <div class="error-message" id="subject-error">Silakan pilih jenis ujian</div>
                 </div>
             </div>
             
@@ -1167,30 +1235,6 @@
                                 <label class="admin-control-label">Durasi Ujian (menit)</label>
                                 <input type="number" id="exam-duration" class="admin-control-input" value="120" min="5" max="300">
                             </div>
-                            <div class="admin-control-group">
-                                <label class="admin-control-label">Jumlah Soal</label>
-                                <select id="question-count" class="admin-control-input">
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="15">15</option>
-                                    <option value="20">20</option>
-                                    <option value="25">25</option>
-                                    <option value="30">30</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                    <option value="150">150</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="admin-control-group">
-                            <label class="admin-control-label">Acak Soal</label>
-                            <div class="admin-toggle">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="randomize-questions" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span id="randomize-status">Aktif</span>
-                            </div>
                         </div>
                     </div>
                     
@@ -1198,7 +1242,7 @@
                         <h5>Pengaturan Konten</h5>
                         <div class="form-group">
                             <label class="form-label">Pesan Pembuka</label>
-                            <textarea id="greeting-message-input" class="form-control" rows="3" style="color: #333;">Selamat datang di sistem ujian bahasa Inggris online PERGUNU Situbondo. Silakan masukkan kode login untuk melanjutkan.</textarea>
+                            <textarea id="greeting-message-input" class="form-control" rows="3" style="color: #333;">Selamat datang di sistem ujian online Bahasa Inggris PERGUNU Situbondo. Silakan masukkan kode login untuk melanjutkan.</textarea>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Pesan Informasi Berkala</label>
@@ -1250,6 +1294,17 @@
                                     <!-- Participant data will be loaded here -->
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="export-buttons">
+                            <button id="export-csv-btn" class="btn btn-info">
+                                <i class="fas fa-file-csv"></i> Export to CSV
+                            </button>
+                            <button id="export-json-btn" class="btn btn-info">
+                                <i class="fas fa-file-code"></i> Export to JSON
+                            </button>
+                            <button id="export-excel-btn" class="btn btn-success">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
                         </div>
                     </div>
                     
@@ -1388,6 +1443,7 @@
     <audio id="opening-sound" src="https://github.com/pergunu/ujian-online/raw/main/assets/audio/opening.mp3" preload="auto"></audio>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         // Global variables
         let currentScreen = 'welcome';
@@ -1399,7 +1455,11 @@
         let examTimer;
         let examTimeLeft = 120 * 60; // 120 minutes in seconds
         let selectedParticipants = [];
-        
+        let questionOrder = []; // Untuk menyimpan urutan soal yang diacak
+
+        // URL Google Apps Script untuk penyimpanan data
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuh1M0pS64v5e_HYGafcG7CD8RwCEf4FVroKnOT1DujxTdCnn6zTBeQvSwgmenspgN/exec';
+
         // Audio elements
         const buttonSound = document.getElementById('button-sound');
         const correctAnswerSound = document.getElementById('correct-answer-sound');
@@ -1411,17 +1471,15 @@
         const DEFAULT_LOGIN_CODE = '12345';
         const DEFAULT_ADMIN_PANEL_CODE = '65614222';
         
-        // Store participants data
-        let participantsData = JSON.parse(localStorage.getItem('participantsData')) || [];
+        // Store participants data in localStorage
+        let participantsData = JSON.parse(localStorage.getItem('pergunuParticipantsData')) || [];
         
-        // Store admin settings
-        let adminSettings = JSON.parse(localStorage.getItem('adminSettings')) || {
+        // Store admin settings in localStorage
+        let adminSettings = JSON.parse(localStorage.getItem('pergunuAdminSettings')) || {
             loginCode: DEFAULT_LOGIN_CODE,
             adminCode: DEFAULT_ADMIN_PANEL_CODE,
             examDuration: 120,
-            questionCount: 20,
-            randomizeQuestions: true,
-            greetingMessage: "Selamat datang di sistem ujian bahasa Inggris online PERGUNU Situbondo. Silakan masukkan kode login untuk melanjutkan.",
+            greetingMessage: "Selamat datang di sistem ujian online Bahasa Inggris PERGUNU Situbondo. Silakan masukkan kode login untuk melanjutkan.",
             adminMessage: "Tidak ada informasi terbaru saat ini.",
             chairmanName: "Moh. Nuril Hudha, S.Pd., M.Si.",
             enabledSubjects: {
@@ -1429,1939 +1487,390 @@
             }
         };
 
-        // Question bank structure with levels (English only)
+        // Expanded Question bank with more questions (Bahasa Inggris only)
         let QUESTION_BANK = {
             'SD': {
                 'Bahasa Inggris': [
                     {
-                question: "What is the color of the sky on a clear day?",
-                options: [
-                    "A. Red",
-                    "B. Green",
-                    "C. Blue",
-                    "D. Yellow",
-                    "E. Black"
-                ],
-                correctAnswer: 2,
-                explanation: "The sky appears blue on a clear day due to the scattering of sunlight by the atmosphere. The correct answer is C. Blue."
-            },
-            {
-                question: "Which of the following is a fruit?",
-                options: [
-                    "A. Carrot",
-                    "B. Tomato",
-                    "C. Potato",
-                    "D. Onion",
-                    "E. Cabbage"
-                ],
-                correctAnswer: 1,
-                explanation: "Tomato is botanically a fruit, even though it is often used as a vegetable in cooking. The correct answer is B. Tomato."
-            },
-            {
-                question: "What is the opposite of 'happy'?",
-                options: [
-                    "A. Sad",
-                    "B. Angry",
-                    "C. Excited",
-                    "D. Tired",
-                    "E. Hungry"
-                ],
-                correctAnswer: 0,
-                explanation: "The opposite of 'happy' is 'sad'. The correct answer is A. Sad."
-            },
-            {
-                question: "Which animal says 'meow'?",
-                options: [
-                    "A. Dog",
-                    "B. Cow",
-                    "C. Cat",
-                    "D. Duck",
-                    "E. Lion"
-                ],
-                correctAnswer: 2,
-                explanation: "Cats are known for making the sound 'meow'. The correct answer is C. Cat."
-            },
-            {
-                question: "How many legs does a spider have?",
-                options: [
-                    "A. 4",
-                    "B. 6",
-                    "C. 8",
-                    "D. 10",
-                    "E. 12"
-                ],
-                correctAnswer: 2,
-                explanation: "Spiders have eight legs. The correct answer is C. 8."
-            },
-            {
-                question: "What do you use to write on paper?",
-                options: [
-                    "A. Spoon",
-                    "B. Pencil",
-                    "C. Fork",
-                    "D. Knife",
-                    "E. Plate"
-                ],
-                correctAnswer: 1,
-                explanation: "A pencil is used to write on paper. The correct answer is B. Pencil."
-            },
-            {
-                question: "Which of these is a vegetable?",
-                options: [
-                    "A. Apple",
-                    "B. Banana",
-                    "C. Carrot",
-                    "D. Orange",
-                    "E. Grape"
-                ],
-                correctAnswer: 2,
-                explanation: "Carrot is a vegetable, while the others are fruits. The correct answer is C. Carrot."
-            },
-            {
-                question: "What is the capital of Indonesia?",
-                options: [
-                    "A. Jakarta",
-                    "B. Bandung",
-                    "C. Surabaya",
-                    "D. Medan",
-                    "E. Bali"
-                ],
-                correctAnswer: 0,
-                explanation: "The capital of Indonesia is Jakarta. The correct answer is A. Jakarta."
-            },
-            {
-                question: "Which month comes after June?",
-                options: [
-                    "A. May",
-                    "B. July",
-                    "C. August",
-                    "D. September",
-                    "E. October"
-                ],
-                correctAnswer: 1,
-                explanation: "July comes after June. The correct answer is B. July."
-            },
-            {
-                question: "What is the plural of 'child'?",
-                options: [
-                    "A. Childs",
-                    "B. Children",
-                    "C. Childes",
-                    "D. Child's",
-                    "E. Child"
-                ],
-                correctAnswer: 1,
-                explanation: "The plural of 'child' is 'children'. The correct answer is B. Children."
-            },
-            {
-                question: "Which word is spelled correctly?",
-                options: [
-                    "A. Skool",
-                    "B. Schooll",
-                    "C. School",
-                    "D. Sckool",
-                    "E. Scholl"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct spelling is 'school'. The correct answer is C. School."
-            },
-            {
-                question: "What do you call the person who teaches in a school?",
-                options: [
-                    "A. Doctor",
-                    "B. Teacher",
-                    "C. Engineer",
-                    "D. Farmer",
-                    "E. Driver"
-                ],
-                correctAnswer: 1,
-                explanation: "A person who teaches in a school is called a teacher. The correct answer is B. Teacher."
-            },
-            {
-                question: "Which of these is a color?",
-                options: [
-                    "A. Table",
-                    "B. Chair",
-                    "C. Red",
-                    "D. Book",
-                    "E. Pen"
-                ],
-                correctAnswer: 2,
-                explanation: "Red is a color. The correct answer is C. Red."
-            },
-            {
-                question: "What is the opposite of 'big'?",
-                options: [
-                    "A. Large",
-                    "B. Huge",
-                    "C. Small",
-                    "D. Tall",
-                    "E. Wide"
-                ],
-                correctAnswer: 2,
-                explanation: "The opposite of 'big' is 'small'. The correct answer is C. Small."
-            },
-            {
-                question: "Which animal lives in water?",
-                options: [
-                    "A. Cow",
-                    "B. Horse",
-                    "C. Fish",
-                    "D. Chicken",
-                    "E. Dog"
-                ],
-                correctAnswer: 2,
-                explanation: "Fish live in water. The correct answer is C. Fish."
-            },
-            {
-                question: "What do you use to see?",
-                options: [
-                    "A. Ears",
-                    "B. Nose",
-                    "C. Eyes",
-                    "D. Mouth",
-                    "E. Hands"
-                ],
-                correctAnswer: 2,
-                explanation: "You use your eyes to see. The correct answer is C. Eyes."
-            },
-            {
-                question: "Which of these is a day of the week?",
-                options: [
-                    "A. January",
-                    "B. Monday",
-                    "C. Summer",
-                    "D. Year",
-                    "E. Month"
-                ],
-                correctAnswer: 1,
-                explanation: "Monday is a day of the week. The correct answer is B. Monday."
-            },
-            {
-                question: "What is 5 + 7 in English?",
-                options: [
-                    "A. Ten",
-                    "B. Eleven",
-                    "C. Twelve",
-                    "D. Thirteen",
-                    "E. Fourteen"
-                ],
-                correctAnswer: 2,
-                explanation: "5 + 7 = 12, which is 'twelve' in English. The correct answer is C. Twelve."
-            },
-            {
-                question: "Which word means 'not fast'?",
-                options: [
-                    "A. Quick",
-                    "B. Slow",
-                    "C. Rapid",
-                    "D. Speedy",
-                    "E. Fast"
-                ],
-                correctAnswer: 1,
-                explanation: "The word 'slow' means 'not fast'. The correct answer is B. Slow."
-            },
-            {
-                question: "What do you call the meal you eat in the morning?",
-                options: [
-                    "A. Lunch",
-                    "B. Dinner",
-                    "C. Breakfast",
-                    "D. Snack",
-                    "E. Brunch"
-                ],
-                correctAnswer: 2,
-                explanation: "The meal you eat in the morning is called breakfast. The correct answer is C. Breakfast."
-            },
-            {
-                question: "Which of these is a season?",
-                options: [
-                    "A. Week",
-                    "B. Month",
-                    "C. Year",
-                    "D. Winter",
-                    "E. Day"
-                ],
-                correctAnswer: 3,
-                explanation: "Winter is one of the four seasons. The correct answer is D. Winter."
-            },
-            {
-                question: "What is the capital of England?",
-                options: [
-                    "A. Paris",
-                    "B. London",
-                    "C. Berlin",
-                    "D. Rome",
-                    "E. Madrid"
-                ],
-                correctAnswer: 1,
-                explanation: "The capital of England is London. The correct answer is B. London."
-            },
-            {
-                question: "Which of these is a pronoun?",
-                options: [
-                    "A. Run",
-                    "B. Happy",
-                    "C. She",
-                    "D. Quickly",
-                    "E. Book"
-                ],
-                correctAnswer: 2,
-                explanation: "'She' is a pronoun. The correct answer is C. She."
-            },
-            {
-                question: "What is the past tense of 'go'?",
-                options: [
-                    "A. Goed",
-                    "B. Went",
-                    "C. Gone",
-                    "D. Going",
-                    "E. Goes"
-                ],
-                correctAnswer: 1,
-                explanation: "The past tense of 'go' is 'went'. The correct answer is B. Went."
-            },
-            {
-                question: "Which animal gives us milk?",
-                options: [
-                    "A. Lion",
-                    "B. Cow",
-                    "C. Tiger",
-                    "D. Elephant",
-                    "E. Dog"
-                ],
-                correctAnswer: 1,
-                explanation: "Cows give us milk. The correct answer is B. Cow."
-            },
-            {
-                question: "What do you call a baby dog?",
-                options: [
-                    "A. Kitten",
-                    "B. Puppy",
-                    "C. Calf",
-                    "D. Cub",
-                    "E. Chick"
-                ],
-                correctAnswer: 1,
-                explanation: "A baby dog is called a puppy. The correct answer is B. Puppy."
-            },
-            {
-                question: "Which word is a verb?",
-                options: [
-                    "A. Beautiful",
-                    "B. Happiness",
-                    "C. Run",
-                    "D. Quickly",
-                    "E. Table"
-                ],
-                correctAnswer: 2,
-                explanation: "'Run' is a verb. The correct answer is C. Run."
-            },
-            {
-                question: "What is the opposite of 'hot'?",
-                options: [
-                    "A. Warm",
-                    "B. Cold",
-                    "C. Cool",
-                    "D. Freezing",
-                    "E. Boiling"
-                ],
-                correctAnswer: 1,
-                explanation: "The opposite of 'hot' is 'cold'. The correct answer is B. Cold."
-            },
-            {
-                question: "Which of these is a school subject?",
-                options: [
-                    "A. Table",
-                    "B. Mathematics",
-                    "C. Pencil",
-                    "D. Book",
-                    "E. Chair"
-                ],
-                correctAnswer: 1,
-                explanation: "Mathematics is a school subject. The correct answer is B. Mathematics."
-            },
-            {
-                question: "What do you call the place where you borrow books?",
-                options: [
-                    "A. Hospital",
-                    "B. Library",
-                    "C. School",
-                    "D. Park",
-                    "E. Zoo"
-                ],
-                correctAnswer: 1,
-                explanation: "You borrow books from a library. The correct answer is B. Library."
-            },
-            {
-                question: "Which word means 'more than one'?",
-                options: [
-                    "A. Singular",
-                    "B. Plural",
-                    "C. Single",
-                    "D. Alone",
-                    "E. Only"
-                ],
-                correctAnswer: 1,
-                explanation: "Plural means 'more than one'. The correct answer is B. Plural."
-            },
-            {
-                question: "What is the color of grass?",
-                options: [
-                    "A. Red",
-                    "B. Blue",
-                    "C. Green",
-                    "D. Yellow",
-                    "E. Black"
-                ],
-                correctAnswer: 2,
-                explanation: "Grass is typically green. The correct answer is C. Green."
-            },
-            {
-                question: "Which of these is a transportation vehicle?",
-                options: [
-                    "A. Table",
-                    "B. Chair",
-                    "C. Bus",
-                    "D. Book",
-                    "E. Pencil"
-                ],
-                correctAnswer: 2,
-                explanation: "A bus is a transportation vehicle. The correct answer is C. Bus."
-            },
-            {
-                question: "What is the opposite of 'day'?",
-                options: [
-                    "A. Morning",
-                    "B. Afternoon",
-                    "C. Evening",
-                    "D. Night",
-                    "E. Noon"
-                ],
-                correctAnswer: 3,
-                explanation: "The opposite of 'day' is 'night'. The correct answer is D. Night."
-            },
-            {
-                question: "Which word is a greeting?",
-                options: [
-                    "A. Goodbye",
-                    "B. Hello",
-                    "C. Sorry",
-                    "D. Thank you",
-                    "E. Please"
-                ],
-                correctAnswer: 1,
-                explanation: "'Hello' is a greeting. The correct answer is B. Hello."
-            },
-            {
-                question: "What do you call the meal you eat in the evening?",
-                options: [
-                    "A. Breakfast",
-                    "B. Lunch",
-                    "C. Dinner",
-                    "D. Snack",
-                    "E. Brunch"
-                ],
-                correctAnswer: 2,
-                explanation: "The meal you eat in the evening is called dinner. The correct answer is C. Dinner."
-            },
-            {
-                question: "Which of these is a body part?",
-                options: [
-                    "A. Table",
-                    "B. Chair",
-                    "C. Nose",
-                    "D. Book",
-                    "E. Pen"
-                ],
-                correctAnswer: 2,
-                explanation: "The nose is a body part. The correct answer is C. Nose."
-            },
-            {
-                question: "What is the opposite of 'up'?",
-                options: [
-                    "A. Left",
-                    "B. Right",
-                    "C. Down",
-                    "D. Side",
-                    "E. Around"
-                ],
-                correctAnswer: 2,
-                explanation: "The opposite of 'up' is 'down'. The correct answer is C. Down."
-            },
-            {
-                question: "Which word is an adjective?",
-                options: [
-                    "A. Run",
-                    "B. Quickly",
-                    "C. Happy",
-                    "D. Jump",
-                    "E. Swim"
-                ],
-                correctAnswer: 2,
-                explanation: "'Happy' is an adjective. The correct answer is C. Happy."
-            },
-            {
-                question: "What is the color of the sun?",
-                options: [
-                    "A. Blue",
-                    "B. Green",
-                    "C. Yellow",
-                    "D. Black",
-                    "E. White"
-                ],
-                correctAnswer: 2,
-                explanation: "The sun appears yellow. The correct answer is C. Yellow."
-            },
-            {
-                question: "Which of these is a number?",
-                options: [
-                    "A. Apple",
-                    "B. Seven",
-                    "C. Book",
-                    "D. Table",
-                    "E. Chair"
-                ],
-                correctAnswer: 1,
-                explanation: "'Seven' is a number. The correct answer is B. Seven."
-            },
-            {
-                question: "What do you call a baby cat?",
-                options: [
-                    "A. Puppy",
-                    "B. Kitten",
-                    "C. Calf",
-                    "D. Cub",
-                    "E. Chick"
-                ],
-                correctAnswer: 1,
-                explanation: "A baby cat is called a kitten. The correct answer is B. Kitten."
-            },
-            {
-                question: "Which word is a conjunction?",
-                options: [
-                    "A. Run",
-                    "B. And",
-                    "C. Happy",
-                    "D. Quickly",
-                    "E. Book"
-                ],
-                correctAnswer: 1,
-                explanation: "'And' is a conjunction. The correct answer is B. And."
-            },
-            {
-                question: "What is the opposite of 'left'?",
-                options: [
-                    "A. Up",
-                    "B. Down",
-                    "C. Right",
-                    "D. Front",
-                    "E. Back"
-                ],
-                correctAnswer: 2,
-                explanation: "The opposite of 'left' is 'right'. The correct answer is C. Right."
-            },
-            {
-                question: "Which of these is a sport?",
-                options: [
-                    "A. Table",
-                    "B. Football",
-                    "C. Book",
-                    "D. Pencil",
-                    "E. Chair"
-                ],
-                correctAnswer: 1,
-                explanation: "Football is a sport. The correct answer is B. Football."
-            },
-            {
-                question: "What do you call the place where you buy food?",
-                options: [
-                    "A. School",
-                    "B. Hospital",
-                    "C. Supermarket",
-                    "D. Library",
-                    "E. Park"
-                ],
-                correctAnswer: 2,
-                explanation: "You buy food at a supermarket. The correct answer is C. Supermarket."
-            },
-            {
-                question: "Which word is an adverb?",
-                options: [
-                    "A. Run",
-                    "B. Happy",
-                    "C. Quickly",
-                    "D. Book",
-                    "E. Table"
-                ],
-                correctAnswer: 2,
-                explanation: "'Quickly' is an adverb. The correct answer is C. Quickly."
-            },
-            {
-                question: "What is the color of snow?",
-                options: [
-                    "A. Black",
-                    "B. Blue",
-                    "C. Green",
-                    "D. White",
-                    "E. Red"
-                ],
-                correctAnswer: 3,
-                explanation: "Snow is white. The correct answer is D. White."
-            },
-            {
-                question: "Which of these is a clothing item?",
-                options: [
-                    "A. Table",
-                    "B. Chair",
-                    "C. Shirt",
-                    "D. Book",
-                    "E. Pen"
-                ],
-                correctAnswer: 2,
-                explanation: "A shirt is a clothing item. The correct answer is C. Shirt."
-            },
-            {
-                question: "What is the opposite of 'open'?",
-                options: [
-                    "A. Close",
-                    "B. Start",
-                    "C. Begin",
-                    "D. Enter",
-                    "E. Exit"
-                ],
-                correctAnswer: 0,
-                explanation: "The opposite of 'open' is 'close'. The correct answer is A. Close."
-            },
-            {
-                question: "Which word is a preposition?",
-                options: [
-                    "A. Run",
-                    "B. Happy",
-                    "C. On",
-                    "D. Quickly",
-                    "E. Book"
-                ],
-                correctAnswer: 2,
-                explanation: "'On' is a preposition. The correct answer is C. On."
-            },
-            {
-                question: "What is the color of a banana?",
-                options: [
-                    "A. Blue",
-                    "B. Green",
-                    "C. Yellow",
-                    "D. Red",
-                    "E. Black"
-                ],
-                correctAnswer: 2,
-                explanation: "Bananas are typically yellow. The correct answer is C. Yellow."
-            },
-            {
-                question: "Which of these is a room in a house?",
-                options: [
-                    "A. Table",
-                    "B. Kitchen",
-                    "C. Book",
-                    "D. Pencil",
-                    "E. Chair"
-                ],
-                correctAnswer: 1,
-                explanation: "The kitchen is a room in a house. The correct answer is B. Kitchen."
-            },
-            {
-                question: "What do you call the place where you see animals?",
-                options: [
-                    "A. School",
-                    "B. Hospital",
-                    "C. Zoo",
-                    "D. Library",
-                    "E. Park"
-                ],
-                correctAnswer: 2,
-                explanation: "You see animals at a zoo. The correct answer is C. Zoo."
-            },
-            {
-                question: "Which word is an article?",
-                options: [
-                    "A. Run",
-                    "B. Happy",
-                    "C. The",
-                    "D. Quickly",
-                    "E. Book"
-                ],
-                correctAnswer: 2,
-                explanation: "'The' is an article. The correct answer is C. The."
-            },
-            {
-                question: "What is the color of an apple?",
-                options: [
-                    "A. Blue",
-                    "B. Green",
-                    "C. Yellow",
-                    "D. Red",
-                    "E. All of the above"
-                ],
-                correctAnswer: 4,
-                explanation: "Apples can be red, green, or yellow. The correct answer is E. All of the above."
-            }
+                        question: "What is the English translation of 'buku'?",
+                        options: [
+                            "A. Book",
+                            "B. Pen",
+                            "C. Table",
+                            "D. Chair",
+                            "E. Bag"
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'Book'. In English, 'buku' is translated as 'book'."
+                    },
+                    {
+                        question: "Which of these is a correct greeting in the morning?",
+                        options: [
+                            "A. Good afternoon",
+                            "B. Good night",
+                            "C. Good evening",
+                            "D. Good morning",
+                            "E. Good bye"
+                        ],
+                        correctAnswer: 3,
+                        explanation: "The correct answer is 'Good morning'. This is the appropriate greeting to use in the morning."
+                    },
+                    {
+                        question: "What is the color of the sky on a clear day?",
+                        options: [
+                            "A. Red",
+                            "B. Green",
+                            "C. Blue",
+                            "D. Yellow",
+                            "E. Black"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Blue'. On a clear day, the sky appears blue."
+                    },
+                    {
+                        question: "How do you say 'terima kasih' in English?",
+                        options: [
+                            "A. Please",
+                            "B. Sorry",
+                            "C. Thank you",
+                            "D. Excuse me",
+                            "E. You're welcome"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Thank you'. 'Terima kasih' is translated as 'Thank you' in English."
+                    },
+                    {
+                        question: "Which of these is a fruit?",
+                        options: [
+                            "A. Carrot",
+                            "B. Potato",
+                            "C. Apple",
+                            "D. Onion",
+                            "E. Cabbage"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Apple'. Apple is a fruit, while the other options are vegetables."
+                    },
+                    {
+                        question: "What is the opposite of 'big'?",
+                        options: [
+                            "A. Large",
+                            "B. Huge",
+                            "C. Small",
+                            "D. Tall",
+                            "E. Wide"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Small'. The opposite of 'big' is 'small'."
+                    },
+                    {
+                        question: "Which animal says 'meow'?",
+                        options: [
+                            "A. Dog",
+                            "B. Cat",
+                            "C. Cow",
+                            "D. Duck",
+                            "E. Bird"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'Cat'. Cats make the sound 'meow'."
+                    },
+                    {
+                        question: "What do you call your father's brother?",
+                        options: [
+                            "A. Uncle",
+                            "B. Aunt",
+                            "C. Cousin",
+                            "D. Nephew",
+                            "E. Grandfather"
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'Uncle'. Your father's brother is your uncle."
+                    },
+                    {
+                        question: "Which of these is a number?",
+                        options: [
+                            "A. Apple",
+                            "B. Seven",
+                            "C. Happy",
+                            "D. Run",
+                            "E. Blue"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'Seven'. 'Seven' is a number, while the other options are not."
+                    },
+                    {
+                        question: "What is the English word for 'sekolah'?",
+                        options: [
+                            "A. Hospital",
+                            "B. School",
+                            "C. Office",
+                            "D. Market",
+                            "E. Park"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'School'. 'Sekolah' is translated as 'school' in English."
+                    }
                 ]
             },
             'SMP': {
                 'Bahasa Inggris': [
-                   {
-                question: "What is the opposite meaning of the word 'generous'?",
-                options: [
-                    "A. Kind",
-                    "B. Selfish",
-                    "C. Friendly",
-                    "D. Honest",
-                    "E. Brave"
-                ],
-                correctAnswer: 1,
-                explanation: "The opposite of 'generous' is 'selfish', which means unwilling to share or give. The correct answer is B. Selfish."
-            },
-            {
-                question: "Which sentence is in the present perfect tense?",
-                options: [
-                    "A. She goes to school every day.",
-                    "B. They have finished their homework.",
-                    "C. He will visit his grandparents tomorrow.",
-                    "D. I was reading a book yesterday.",
-                    "E. We are playing football now."
-                ],
-                correctAnswer: 1,
-                explanation: "The present perfect tense is formed with 'have/has + past participle'. 'They have finished their homework' is the correct example. The answer is B."
-            },
-            {
-                question: "Choose the correct sentence in passive voice:",
-                options: [
-                    "A. The cat chased the mouse.",
-                    "B. The mouse was chased by the cat.",
-                    "C. The cat is chasing the mouse.",
-                    "D. The mouse has chased the cat.",
-                    "E. The cat will chase the mouse."
-                ],
-                correctAnswer: 1,
-                explanation: "The passive voice structure is 'object + was/were + past participle + by + subject'. The correct answer is B. The mouse was chased by the cat."
-            },
-            {
-                question: "What is the correct order of the words to form a meaningful sentence? (always / she / early / wakes up)",
-                options: [
-                    "A. She always wakes up early.",
-                    "B. Always she wakes up early.",
-                    "C. She wakes up always early.",
-                    "D. Early she always wakes up.",
-                    "E. Wakes up she always early."
-                ],
-                correctAnswer: 0,
-                explanation: "The correct order is subject (She) + adverb of frequency (always) + verb (wakes up) + adverb of time (early). The answer is A."
-            },
-            {
-                question: "Which word is the adverb in the sentence: 'He spoke loudly during the meeting.'?",
-                options: [
-                    "A. He",
-                    "B. spoke",
-                    "C. loudly",
-                    "D. during",
-                    "E. meeting"
-                ],
-                correctAnswer: 2,
-                explanation: "The adverb 'loudly' modifies the verb 'spoke' by describing how he spoke. The answer is C."
-            },
-            {
-                question: "What is the correct response to: 'Would you like some coffee?'",
-                options: [
-                    "A. Yes, I do.",
-                    "B. No, I wouldn't.",
-                    "C. Yes, I would like.",
-                    "D. Yes, please.",
-                    "E. No, I don't like."
-                ],
-                correctAnswer: 3,
-                explanation: "The polite response to an offer is 'Yes, please' or 'No, thank you'. The correct answer is D."
-            },
-            {
-                question: "Identify the correct plural form of 'child'.",
-                options: [
-                    "A. childs",
-                    "B. childrens",
-                    "C. children",
-                    "D. childes",
-                    "E. childern"
-                ],
-                correctAnswer: 2,
-                explanation: "The irregular plural form of 'child' is 'children'. The correct answer is C."
-            },
-            {
-                question: "Which sentence is grammatically correct?",
-                options: [
-                    "A. She don't like apples.",
-                    "B. He doesn't likes bananas.",
-                    "C. They doesn't eat meat.",
-                    "D. We don't drink coffee.",
-                    "E. It don't work properly."
-                ],
-                correctAnswer: 3,
-                explanation: "The correct sentence uses 'don't' with the plural subject 'We'. The answer is D."
-            },
-            {
-                question: "What is the past tense of the verb 'bring'?",
-                options: [
-                    "A. bringed",
-                    "B. brought",
-                    "C. brang",
-                    "D. bring",
-                    "E. broughted"
-                ],
-                correctAnswer: 1,
-                explanation: "The past tense of 'bring' is 'brought'. The correct answer is B."
-            },
-            {
-                question: "Choose the correct preposition to complete the sentence: 'She is afraid ___ spiders.'",
-                options: [
-                    "A. of",
-                    "B. at",
-                    "C. in",
-                    "D. on",
-                    "E. by"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct preposition after 'afraid' is 'of'. The answer is A."
-            },
-            {
-                question: "Which word is a synonym for 'happy'?",
-                options: [
-                    "A. Sad",
-                    "B. Angry",
-                    "C. Joyful",
-                    "D. Tired",
-                    "E. Bored"
-                ],
-                correctAnswer: 2,
-                explanation: "A synonym for 'happy' is 'joyful'. The correct answer is C."
-            },
-            {
-                question: "What is the correct tag question for: 'She is coming to the party, ___?'",
-                options: [
-                    "A. is she",
-                    "B. isn't she",
-                    "C. doesn't she",
-                    "D. wasn't she",
-                    "E. hasn't she"
-                ],
-                correctAnswer: 1,
-                explanation: "The tag question for a positive statement with 'is' is 'isn't she'. The answer is B."
-            },
-            {
-                question: "Identify the correct comparative form of 'good'.",
-                options: [
-                    "A. gooder",
-                    "B. more good",
-                    "C. better",
-                    "D. best",
-                    "E. well"
-                ],
-                correctAnswer: 2,
-                explanation: "The comparative form of 'good' is 'better'. The correct answer is C."
-            },
-            {
-                question: "Which sentence uses the correct possessive form?",
-                options: [
-                    "A. The childrens' toys are on the floor.",
-                    "B. The children's toys are on the floor.",
-                    "C. The childrens toys are on the floor.",
-                    "D. The childrens's toys are on the floor.",
-                    "E. The children toys are on the floor."
-                ],
-                correctAnswer: 1,
-                explanation: "The correct possessive form for 'children' is 'children's'. The answer is B."
-            },
-            {
-                question: "What is the correct reported speech for: 'I am tired,' he said.",
-                options: [
-                    "A. He said he is tired.",
-                    "B. He said he was tired.",
-                    "C. He said he has been tired.",
-                    "D. He said he had been tired.",
-                    "E. He said he will be tired."
-                ],
-                correctAnswer: 1,
-                explanation: "In reported speech, present tense changes to past tense. The correct answer is B."
-            },
-            {
-                question: "Which word is the correct conjunction to complete the sentence: 'I wanted to go out, ___ it was raining.'",
-                options: [
-                    "A. and",
-                    "B. but",
-                    "C. so",
-                    "D. or",
-                    "E. because"
-                ],
-                correctAnswer: 1,
-                explanation: "The conjunction 'but' shows contrast. The correct answer is B."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'She ___ her homework before dinner.'",
-                options: [
-                    "A. finish",
-                    "B. finishes",
-                    "C. finishing",
-                    "D. finished",
-                    "E. has finished"
-                ],
-                correctAnswer: 4,
-                explanation: "The present perfect tense 'has finished' is appropriate here. The answer is E."
-            },
-            {
-                question: "Which sentence is in the future continuous tense?",
-                options: [
-                    "A. She will go to the market.",
-                    "B. She will be going to the market.",
-                    "C. She is going to the market.",
-                    "D. She went to the market.",
-                    "E. She has gone to the market."
-                ],
-                correctAnswer: 1,
-                explanation: "The future continuous tense is 'will be + present participle'. The correct answer is B."
-            },
-            {
-                question: "What is the correct question for the answer: 'I have been living here for five years.'",
-                options: [
-                    "A. How long you live here?",
-                    "B. How long have you been living here?",
-                    "C. How long did you live here?",
-                    "D. How long do you live here?",
-                    "E. How long are you living here?"
-                ],
-                correctAnswer: 1,
-                explanation: "The present perfect continuous tense matches the answer. The correct question is B."
-            },
-            {
-                question: "Which word is an example of an uncountable noun?",
-                options: [
-                    "A. book",
-                    "B. water",
-                    "C. apple",
-                    "D. chair",
-                    "E. dog"
-                ],
-                correctAnswer: 1,
-                explanation: "'Water' is an uncountable noun. The correct answer is B."
-            },
-            {
-                question: "What is the correct negative form of: 'They have seen that movie.'",
-                options: [
-                    "A. They haven't seen that movie.",
-                    "B. They don't have seen that movie.",
-                    "C. They didn't have seen that movie.",
-                    "D. They hasn't seen that movie.",
-                    "E. They not have seen that movie."
-                ],
-                correctAnswer: 0,
-                explanation: "The negative form of present perfect is 'haven't/hasn't + past participle'. The answer is A."
-            },
-            {
-                question: "Which sentence is grammatically incorrect?",
-                options: [
-                    "A. She can swim very well.",
-                    "B. He must to finish his work.",
-                    "C. They should arrive on time.",
-                    "D. We might go to the beach.",
-                    "E. I could help you tomorrow."
-                ],
-                correctAnswer: 1,
-                explanation: "'Must' is followed by the base verb without 'to'. The incorrect sentence is B."
-            },
-            {
-                question: "What is the correct order of adjectives in the sentence: 'She bought a ___ bag.' (leather, brown, small)",
-                options: [
-                    "A. small brown leather",
-                    "B. brown small leather",
-                    "C. leather brown small",
-                    "D. small leather brown",
-                    "E. brown leather small"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct order is size (small) + color (brown) + material (leather). The answer is A."
-            },
-            {
-                question: "Which word is a homophone for 'flower'?",
-                options: [
-                    "A. flour",
-                    "B. floor",
-                    "C. flare",
-                    "D. flow",
-                    "E. flyer"
-                ],
-                correctAnswer: 0,
-                explanation: "'Flour' sounds the same as 'flower' but has a different meaning. The answer is A."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'If I ___ you, I would apologize.'",
-                options: [
-                    "A. am",
-                    "B. was",
-                    "C. were",
-                    "D. have been",
-                    "E. will be"
-                ],
-                correctAnswer: 2,
-                explanation: "In hypothetical situations, 'were' is used for all subjects. The answer is C."
-            },
-            {
-                question: "Which sentence uses the correct article?",
-                options: [
-                    "A. She is a honest person.",
-                    "B. He is an university student.",
-                    "C. It is an hour-long movie.",
-                    "D. They live in a European country.",
-                    "E. We saw a elephant at the zoo."
-                ],
-                correctAnswer: 3,
-                explanation: "'European' starts with a consonant sound, so 'a' is correct. The answer is D."
-            },
-            {
-                question: "What is the correct response to: 'Thank you very much!'",
-                options: [
-                    "A. No problem.",
-                    "B. You're welcome.",
-                    "C. It's okay.",
-                    "D. Don't worry.",
-                    "E. Never mind."
-                ],
-                correctAnswer: 1,
-                explanation: "The appropriate response to 'thank you' is 'you're welcome'. The answer is B."
-            },
-            {
-                question: "Which word is the correct antonym for 'begin'?",
-                options: [
-                    "A. start",
-                    "B. continue",
-                    "C. finish",
-                    "D. pause",
-                    "E. proceed"
-                ],
-                correctAnswer: 2,
-                explanation: "The antonym for 'begin' is 'finish'. The correct answer is C."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'By next year, she ___ her degree.'",
-                options: [
-                    "A. completes",
-                    "B. will complete",
-                    "C. will have completed",
-                    "D. completed",
-                    "E. has completed"
-                ],
-                correctAnswer: 2,
-                explanation: "The future perfect tense 'will have completed' is used for actions completed by a future time. The answer is C."
-            },
-            {
-                question: "Which sentence is in the passive voice?",
-                options: [
-                    "A. The teacher praised the students.",
-                    "B. The students were praised by the teacher.",
-                    "C. The teacher is praising the students.",
-                    "D. The students praised the teacher.",
-                    "E. The teacher has praised the students."
-                ],
-                correctAnswer: 1,
-                explanation: "The passive voice structure is 'were + past participle + by'. The answer is B."
-            },
-            {
-                question: "What is the correct plural form of 'mouse' (the animal)?",
-                options: [
-                    "A. mouses",
-                    "B. mice",
-                    "C. mousees",
-                    "D. mices",
-                    "E. mouse"
-                ],
-                correctAnswer: 1,
-                explanation: "The irregular plural form of 'mouse' is 'mice'. The correct answer is B."
-            },
-            {
-                question: "Which word is the correct demonstrative pronoun for objects near the speaker?",
-                options: [
-                    "A. this",
-                    "B. that",
-                    "C. these",
-                    "D. those",
-                    "E. them"
-                ],
-                correctAnswer: 0,
-                explanation: "'This' is used for singular objects near the speaker. The answer is A."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'I wish I ___ how to swim.'",
-                options: [
-                    "A. know",
-                    "B. knew",
-                    "C. have known",
-                    "D. will know",
-                    "E. am knowing"
-                ],
-                correctAnswer: 1,
-                explanation: "After 'wish', we use the past tense to express present unreal situations. The answer is B."
-            },
-            {
-                question: "Which sentence is grammatically correct?",
-                options: [
-                    "A. Neither John nor his friends is coming.",
-                    "B. Neither John nor his friends are coming.",
-                    "C. Neither John or his friends are coming.",
-                    "D. Neither John and his friends are coming.",
-                    "E. Neither John but his friends are coming."
-                ],
-                correctAnswer: 1,
-                explanation: "With 'neither...nor', the verb agrees with the closer subject ('friends'). The correct answer is B."
-            },
-            {
-                question: "What is the correct preposition to complete the sentence: 'She is allergic ___ peanuts.'",
-                options: [
-                    "A. at",
-                    "B. for",
-                    "C. to",
-                    "D. with",
-                    "E. on"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct preposition after 'allergic' is 'to'. The answer is C."
-            },
-            {
-                question: "Which word is the correct relative pronoun for people?",
-                options: [
-                    "A. which",
-                    "B. that",
-                    "C. whom",
-                    "D. whose",
-                    "E. where"
-                ],
-                correctAnswer: 2,
-                explanation: "'Whom' is the relative pronoun used for people as objects. The answer is C."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'If it rains tomorrow, we ___ the picnic.'",
-                options: [
-                    "A. cancel",
-                    "B. will cancel",
-                    "C. would cancel",
-                    "D. cancelled",
-                    "E. have cancelled"
-                ],
-                correctAnswer: 1,
-                explanation: "In the first conditional, we use 'will + base verb' in the main clause. The answer is B."
-            },
-            {
-                question: "Which sentence is in the past perfect tense?",
-                options: [
-                    "A. She had finished her work before dinner.",
-                    "B. She has finished her work.",
-                    "C. She finished her work.",
-                    "D. She was finishing her work.",
-                    "E. She will have finished her work."
-                ],
-                correctAnswer: 0,
-                explanation: "The past perfect tense is 'had + past participle'. The correct answer is A."
-            },
-            {
-                question: "What is the correct question tag for: 'You can swim, ___?'",
-                options: [
-                    "A. can you",
-                    "B. can't you",
-                    "C. do you",
-                    "D. don't you",
-                    "E. could you"
-                ],
-                correctAnswer: 1,
-                explanation: "The tag question for a positive statement with 'can' is 'can't you'. The answer is B."
-            },
-            {
-                question: "Which word is the correct antonym for 'ancient'?",
-                options: [
-                    "A. old",
-                    "B. modern",
-                    "C. historic",
-                    "D. aged",
-                    "E. antique"
-                ],
-                correctAnswer: 1,
-                explanation: "The antonym for 'ancient' is 'modern'. The correct answer is B."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'She ___ to the radio when I called.'",
-                options: [
-                    "A. listens",
-                    "B. listened",
-                    "C. was listening",
-                    "D. has listened",
-                    "E. is listening"
-                ],
-                correctAnswer: 2,
-                explanation: "The past continuous 'was listening' describes an ongoing action interrupted by another. The answer is C."
-            },
-            {
-                question: "Which sentence uses the correct conditional form?",
-                options: [
-                    "A. If I would have time, I will help you.",
-                    "B. If I have time, I will help you.",
-                    "C. If I had time, I will help you.",
-                    "D. If I would have time, I would help you.",
-                    "E. If I have time, I would help you."
-                ],
-                correctAnswer: 1,
-                explanation: "The first conditional uses 'if + present simple, will + base verb'. The correct answer is B."
-            },
-            {
-                question: "What is the correct form of the adjective to complete the sentence: 'This is the ___ book I've ever read.'",
-                options: [
-                    "A. interesting",
-                    "B. more interesting",
-                    "C. most interesting",
-                    "D. interestinger",
-                    "E. interestingest"
-                ],
-                correctAnswer: 2,
-                explanation: "The superlative form of 'interesting' is 'most interesting'. The answer is C."
-            },
-            {
-                question: "Which word is the correct synonym for 'famous'?",
-                options: [
-                    "A. unknown",
-                    "B. popular",
-                    "C. ordinary",
-                    "D. common",
-                    "E. usual"
-                ],
-                correctAnswer: 1,
-                explanation: "A synonym for 'famous' is 'popular'. The correct answer is B."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'By the time we arrived, the movie ___ already ___ .'",
-                options: [
-                    "A. has, started",
-                    "B. had, started",
-                    "C. was, starting",
-                    "D. is, starting",
-                    "E. will, start"
-                ],
-                correctAnswer: 1,
-                explanation: "The past perfect 'had started' shows an action completed before another past action. The answer is B."
-            },
-            {
-                question: "Which sentence is grammatically correct?",
-                options: [
-                    "A. Each of the students have a book.",
-                    "B. Each of the students has a book.",
-                    "C. Each of the students having a book.",
-                    "D. Each of the students are having a book.",
-                    "E. Each of the students had a book."
-                ],
-                correctAnswer: 1,
-                explanation: "'Each' is singular and requires 'has'. The correct answer is B."
-            },
-            {
-                question: "What is the correct preposition to complete the sentence: 'He is good ___ playing chess.'",
-                options: [
-                    "A. at",
-                    "B. in",
-                    "C. on",
-                    "D. with",
-                    "E. for"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct preposition after 'good' is 'at'. The answer is A."
-            },
-            {
-                question: "Which word is the correct antonym for 'expand'?",
-                options: [
-                    "A. increase",
-                    "B. extend",
-                    "C. contract",
-                    "D. enlarge",
-                    "E. grow"
-                ],
-                correctAnswer: 2,
-                explanation: "The antonym for 'expand' is 'contract'. The correct answer is C."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'I ___ my keys. Can you help me look for them?'",
-                options: [
-                    "A. lose",
-                    "B. lost",
-                    "C. have lost",
-                    "D. am losing",
-                    "E. will lose"
-                ],
-                correctAnswer: 2,
-                explanation: "The present perfect 'have lost' connects the past action to the present situation. The answer is C."
-            },
-            {
-                question: "Which sentence is in the present perfect continuous tense?",
-                options: [
-                    "A. She has written a letter.",
-                    "B. She has been writing a letter.",
-                    "C. She wrote a letter.",
-                    "D. She writes a letter.",
-                    "E. She will write a letter."
-                ],
-                correctAnswer: 1,
-                explanation: "The present perfect continuous is 'has been + present participle'. The correct answer is B."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'If she ___ harder, she would have passed the exam.'",
-                options: [
-                    "A. studies",
-                    "B. studied",
-                    "C. had studied",
-                    "D. has studied",
-                    "E. would study"
-                ],
-                correctAnswer: 2,
-                explanation: "The third conditional uses 'had + past participle' in the if-clause. The answer is C."
-            },
-            {
-                question: "Which word is the correct synonym for 'brave'?",
-                options: [
-                    "A. fearful",
-                    "B. cowardly",
-                    "C. courageous",
-                    "D. shy",
-                    "E. timid"
-                ],
-                correctAnswer: 2,
-                explanation: "A synonym for 'brave' is 'courageous'. The correct answer is C."
-            },
-            {
-                question: "What is the correct form of the verb to complete the sentence: 'The sun ___ in the east.'",
-                options: [
-                    "A. rise",
-                    "B. rises",
-                    "C. rose",
-                    "D. is rising",
-                    "E. has risen"
-                ],
-                correctAnswer: 1,
-                explanation: "For general truths, we use the present simple. The correct answer is B."
-            }
+                    {
+                        question: "Which sentence is in the present continuous tense?",
+                        options: [
+                            "A. I eat breakfast every morning.",
+                            "B. I am eating breakfast now.",
+                            "C. I ate breakfast an hour ago.",
+                            "D. I will eat breakfast later.",
+                            "E. I have eaten breakfast already."
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'I am eating breakfast now.' This sentence uses the present continuous tense (am + verb-ing) to describe an action happening now."
+                    },
+                    {
+                        question: "What is the comparative form of 'good'?",
+                        options: [
+                            "A. Gooder",
+                            "B. More good",
+                            "C. Better",
+                            "D. Best",
+                            "E. Well"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Better'. The comparative form of the irregular adjective 'good' is 'better'."
+                    },
+                    {
+                        question: "Which of these is a correct question in simple past tense?",
+                        options: [
+                            "A. Did you went to school yesterday?",
+                            "B. Did you go to school yesterday?",
+                            "C. Do you went to school yesterday?",
+                            "D. Does you go to school yesterday?",
+                            "E. Are you go to school yesterday?"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'Did you go to school yesterday?'. In simple past tense questions, we use 'did' + base form of the verb."
+                    },
+                    {
+                        question: "What is the plural form of 'child'?",
+                        options: [
+                            "A. Childs",
+                            "B. Children",
+                            "C. Childes",
+                            "D. Childen",
+                            "E. Childrens"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'Children'. 'Child' is an irregular noun and its plural form is 'children'."
+                    },
+                    {
+                        question: "Which sentence is correct?",
+                        options: [
+                            "A. She don't like coffee.",
+                            "B. She doesn't likes coffee.",
+                            "C. She doesn't like coffee.",
+                            "D. She not like coffee.",
+                            "E. She no like coffee."
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'She doesn't like coffee.'. With third person singular (she), we use 'doesn't' + base form of the verb."
+                    },
+                    {
+                        question: "What is the past participle of 'write'?",
+                        options: [
+                            "A. Writed",
+                            "B. Wrote",
+                            "C. Written",
+                            "D. Writing",
+                            "E. Writes"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Written'. The past participle of the irregular verb 'write' is 'written'."
+                    },
+                    {
+                        question: "Which word is an adverb?",
+                        options: [
+                            "A. Happy",
+                            "B. Happiness",
+                            "C. Happily",
+                            "D. Happier",
+                            "E. Happiest"
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Happily'. This is an adverb formed by adding '-ly' to the adjective 'happy'."
+                    },
+                    {
+                        question: "What is the correct tag question for: 'You're coming to the party, _____?'",
+                        options: [
+                            "A. aren't you",
+                            "B. are you",
+                            "C. isn't you",
+                            "D. don't you",
+                            "E. won't you"
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'aren't you'. The main clause is 'You're coming' (you are coming), so the tag question should be 'aren't you'."
+                    },
+                    {
+                        question: "Which sentence uses 'there is' correctly?",
+                        options: [
+                            "A. There is many books on the table.",
+                            "B. There is a book on the table.",
+                            "C. There is some books on the table.",
+                            "D. There is few books on the table.",
+                            "E. There is several books on the table."
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'There is a book on the table.'. 'There is' is used with singular nouns (a book)."
+                    },
+                    {
+                        question: "What is the opposite of 'expensive'?",
+                        options: [
+                            "A. Cheap",
+                            "B. Costly",
+                            "C. Valuable",
+                            "D. Priceless",
+                            "E. Worthy"
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'Cheap'. The opposite of 'expensive' is 'cheap'."
+                    }
                 ]
             },
             'SMA/SMK': {
                 'Bahasa Inggris': [
-                     {
-                question: "The intricate tapestry of human cognition, while ostensibly governed by rational paradigms, is invariably susceptible to the insidious encroachment of subconscious biases. The phrase 'insidious encroachment' most closely means:",
-                options: [
-                    "A. Sudden invasion",
-                    "B. Gradual and harmful influence",
-                    "C. Obvious interference",
-                    "D. Beneficial intervention",
-                    "E. Temporary disturbance"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. 'Insidious encroachment' refers to something that progresses gradually but with harmful effects, which perfectly describes how subconscious biases can affect human cognition."
-            },
-            {
-                question: "In the sentence 'The polemical nature of his discourse, replete with caustic remarks and ad hominem attacks, did little to engender constructive dialogue,' the word 'caustic' is best interpreted as:",
-                options: [
-                    "A. Sarcastic and biting",
-                    "B. Humorous and lighthearted",
-                    "C. Scholarly and erudite",
-                    "D. Ambiguous and unclear",
-                    "E. Repetitive and monotonous"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. 'Caustic' refers to language that is sharp, sarcastic, and intended to criticize or hurt, which fits the context of remarks that don't foster constructive dialogue."
-            },
-            {
-                question: "Which of the following sentences demonstrates the correct use of the subjunctive mood?",
-                options: [
-                    "A. If I was you, I would reconsider that decision.",
-                    "B. She acts as if she was the boss.",
-                    "C. I suggest that he be given another chance.",
-                    "D. They wish they was able to attend the event.",
-                    "E. Suppose we was to leave early tomorrow."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. The subjunctive mood is used to express wishes, suggestions, or hypothetical situations. 'That he be given' is the correct subjunctive form, while the other options incorrectly use 'was' instead of 'were' or don't maintain the subjunctive form."
-            },
-            {
-                question: "The author's prose, while undeniably erudite, often obfuscates more than it elucidates due to its propensity for gratuitous verbosity and arcane locutions. This sentence suggests that the author's writing is:",
-                options: [
-                    "A. Clear and straightforward",
-                    "B. Overly complex and hard to understand",
-                    "C. Deliberately simplified",
-                    "D. Humorous and engaging",
-                    "E. Technically accurate but dull"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. The description of 'gratuitous verbosity' (unnecessary wordiness) and 'arcane locutions' (obscure expressions) suggests the writing is overly complex and hard to understand, despite being learned ('erudite')."
-            },
-            {
-                question: "Which of the following sentences contains a dangling modifier?",
-                options: [
-                    "A. Running quickly, the finish line approached rapidly.",
-                    "B. After finishing the exam, the students left the room quietly.",
-                    "C. While eating my lunch, I saw an interesting bird.",
-                    "D. Having completed the project, the team celebrated their success.",
-                    "E. To improve your writing, practice is essential."
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. The modifier 'Running quickly' doesn't logically modify the subject 'the finish line' (finish lines don't run). This creates a dangling modifier. The other options all have modifiers that properly connect to their subjects."
-            },
-            {
-                question: "The concept of 'cognitive dissonance' refers to:",
-                options: [
-                    "A. The mental discomfort experienced when holding contradictory beliefs",
-                    "B. A neurological disorder affecting memory retention",
-                    "C. The inability to understand abstract concepts",
-                    "D. A condition where sensory input is misinterpreted",
-                    "E. The process of forgetting traumatic experiences"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. Cognitive dissonance is the mental stress or discomfort experienced by an individual who holds two or more contradictory beliefs, ideas, or values at the same time."
-            },
-            {
-                question: "In the sentence 'The committee's decision was not so much controversial as it was incomprehensible,' the phrase 'not so much...as' is used to:",
-                options: [
-                    "A. Compare two equal alternatives",
-                    "B. Reject both parts of a statement",
-                    "C. Correct or refine a previous statement",
-                    "D. Emphasize the importance of both elements",
-                    "E. Suggest that neither option is acceptable"
-                ],
-                correctAnswer: 2,
-                correctAnswer: 2,
-                explanation: "The correct answer is C. The construction 'not so much X as Y' is used to correct or refine a potential interpretation, suggesting that Y is more accurate than X."
-            },
-            {
-                question: "Which of the following sentences demonstrates proper parallel structure?",
-                options: [
-                    "A. She enjoys hiking, swimming, and to ride bicycles.",
-                    "B. The project requires creativity, patience, and being careful.",
-                    "C. He was praised for his intelligence, his diligence, and his being kind.",
-                    "D. The course covers writing clearly, thinking logically, and effective speaking.",
-                    "E. Our goals are to reduce costs, to improve quality, and to increase efficiency."
-                ],
-                correctAnswer: 4,
-                explanation: "The correct answer is E. All elements in the series are in the same grammatical form (infinitive phrases: 'to reduce,' 'to improve,' 'to increase'). The other options mix different grammatical forms, breaking parallel structure."
-            },
-            {
-                question: "The term 'zeitgeist' refers to:",
-                options: [
-                    "A. A German philosophical movement",
-                    "B. The spirit or mood of a particular period of history",
-                    "C. A type of visual illusion",
-                    "D. The study of time perception",
-                    "E. A method of literary criticism"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. 'Zeitgeist' is a German word that literally means 'time spirit' and refers to the defining spirit or mood of a particular period of history as shown by the ideas and beliefs of the time."
-            },
-            {
-                question: "Which sentence contains a correctly used idiom?",
-                options: [
-                    "A. He decided to take the bull by the hands and confront his boss.",
-                    "B. After the scandal, the politician was in hot water over his head.",
-                    "C. She's burning the midnight oil to finish her dissertation on time.",
-                    "D. The team was told to keep their eyes under the ball during the project.",
-                    "E. I told him to keep his nose above the grindstone if he wanted to succeed."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. 'Burning the midnight oil' is the correct idiom, meaning to work late into the night. The other options mix up or misstate common idioms ('take the bull by the horns,' 'in hot water,' 'keep your eye on the ball,' 'keep your nose to the grindstone')."
-            },
-            {
-                question: "The rhetorical device used in the phrase 'Government of the people, by the people, for the people' is:",
-                options: [
-                    "A. Alliteration",
-                    "B. Anaphora",
-                    "C. Metaphor",
-                    "D. Hyperbole",
-                    "E. Onomatopoeia"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. Anaphora is the repetition of a word or phrase at the beginning of successive clauses, as seen here with the repetition of '...the people.'"
-            },
-            {
-                question: "In the context of logical fallacies, 'post hoc ergo propter hoc' refers to:",
-                options: [
-                    "A. Assuming that because two events occur together, one must have caused the other",
-                    "B. Attacking the person rather than their argument",
-                    "C. Presenting only two alternatives when more exist",
-                    "D. Using ambiguous language to conceal the truth",
-                    "E. Appealing to popular opinion as evidence"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. 'Post hoc ergo propter hoc' (Latin for 'after this, therefore because of this') is the fallacy of assuming that because event B followed event A, A must have caused B."
-            },
-            {
-                question: "Which of the following sentences is grammatically correct?",
-                options: [
-                    "A. Neither the teacher nor the students was prepared for the fire drill.",
-                    "B. Each of the participants have received their materials.",
-                    "C. The data suggests that our hypothesis may be correct.",
-                    "D. A number of suggestions was proposed during the meeting.",
-                    "E. The criteria for selection remains strictly confidential."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. 'Data' can be treated as singular in modern usage, and the verb agrees. A should use 'were' (nor takes a verb agreeing with the nearer subject); B should use 'has' ('each' is singular); D should use 'were' ('a number of' is plural); E should use 'remain' ('criteria' is plural)."
-            },
-            {
-                question: "The literary term 'bildungsroman' refers to:",
-                options: [
-                    "A. A novel dealing with one's ancestors",
-                    "B. A coming-of-age story",
-                    "C. A novel written in letter form",
-                    "D. A story within a story",
-                    "E. A novel set in war time"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. A bildungsroman is a novel that focuses on the psychological and moral growth of the protagonist from youth to adulthood, making it a coming-of-age story."
-            },
-            {
-                question: "Which of the following sentences demonstrates the correct use of 'who' vs. 'whom'?",
-                options: [
-                    "A. Whom shall I say is calling?",
-                    "B. The person who you met yesterday is my boss.",
-                    "C. She is the candidate whom we believe will win.",
-                    "D. Who did you give the book to?",
-                    "E. To who should I address this complaint?"
-                ],
-                correctAnswer: 3,
-                explanation: "The correct answer is D. 'Who' is correct here as it's the subject of the implied clause 'who should receive the book.' A should be 'who' (subject of 'is calling'); B could be 'whom' (object of 'met'); C should be 'who' (subject of 'will win'); E should be 'whom' (object of the preposition 'to')."
-            },
-            {
-                question: "The phrase 'the medium is the message' is associated with:",
-                options: [
-                    "A. Marshall McLuhan",
-                    "B. Noam Chomsky",
-                    "C. Michel Foucault",
-                    "D. Jacques Derrida",
-                    "E. Edward Said"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. This famous phrase comes from Marshall McLuhan's work in media theory, suggesting that the form of a medium embeds itself in the message, creating a symbiotic relationship."
-            },
-            {
-                question: "Which of the following is an example of synecdoche?",
-                options: [
-                    "A. The pen is mightier than the sword",
-                    "B. All the world's a stage",
-                    "C. The White House issued a statement today",
-                    "D. Her smile was like sunshine",
-                    "E. I could hear the ocean in the shell"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. Synecdoche is when a part stands for the whole. Here, 'The White House' stands for the presidential administration. A is metonymy (pen for writing, sword for force); B is metaphor; D is simile; E is literal description."
-            },
-            {
-                question: "In the sentence 'Had I known about the traffic, I would have left earlier,' the verb construction 'would have left' represents:",
-                options: [
-                    "A. First conditional",
-                    "B. Second conditional",
-                    "C. Third conditional",
-                    "D. Zero conditional",
-                    "E. Mixed conditional"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. This is a third conditional structure, used to talk about hypothetical situations in the past (if + past perfect, would have + past participle)."
-            },
-            {
-                question: "The term 'intertextuality' in literary criticism refers to:",
-                options: [
-                    "A. The relationship between text and illustrations",
-                    "B. The way texts reference or echo other texts",
-                    "C. The study of ancient manuscripts",
-                    "D. The interaction between characters in a novel",
-                    "E. The comparison of different editions of a text"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. Intertextuality refers to the shaping of a text's meaning by another text, through references, allusions, plagiarism, translation, etc."
-            },
-            {
-                question: "Which of the following sentences contains a split infinitive?",
-                options: [
-                    "A. She hopes to quickly finish her assignment.",
-                    "B. He promised to always be honest.",
-                    "C. They decided to carefully consider all options.",
-                    "D. I want to truly understand the concept.",
-                    "E. All of the above"
-                ],
-                correctAnswer: 4,
-                explanation: "The correct answer is E. All options contain split infinitives, where an adverb is placed between 'to' and the verb (to quickly finish, to always be, to carefully consider, to truly understand). While some consider this a stylistic error, it's widely accepted in modern usage."
-            },
-            {
-                question: "The concept of 'the Other' in postcolonial theory primarily refers to:",
-                options: [
-                    "A. Alternate versions of reality",
-                    "B. The supernatural in literature",
-                    "C. Marginalized groups constructed as different from the dominant culture",
-                    "D. The unconscious mind",
-                    "E. Future generations"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. In postcolonial theory, 'the Other' refers to marginalized groups who are seen as different from and inferior to the dominant colonial culture, serving to reinforce the identity and superiority of the colonizer."
-            },
-            {
-                question: "Which of the following sentences demonstrates proper use of the semicolon?",
-                options: [
-                    "A. The conference will be held in Paris; which is famous for its museums.",
-                    "B. She has lived in three countries; France, Italy, and Germany.",
-                    "C. The results were surprising; however, they were not unexpected.",
-                    "D. We considered several options; before making our decision.",
-                    "E. His hobbies include; reading, hiking, and photography."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. The semicolon correctly joins two independent clauses connected by a conjunctive adverb ('however'). A should use a comma; B should use a colon; D and E don't need any punctuation after 'options' and 'include.'"
-            },
-            {
-                question: "The literary term 'verisimilitude' refers to:",
-                options: [
-                    "A. The truthfulness of a narrative",
-                    "B. The appearance of being true or real",
-                    "C. The moral lesson of a story",
-                    "D. The historical accuracy of a text",
-                    "E. The author's personal experiences in the work"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. Verisimilitude refers to the semblance of truth or reality in a work of fiction, making it believable or convincing, regardless of its actual truth."
-            },
-            {
-                question: "Which of the following sentences contains a restrictive clause?",
-                options: [
-                    "A. My brother, who lives in Chicago, is visiting next week.",
-                    "B. The book that won the Pulitzer Prize is on sale.",
-                    "C. Paris, where I spent my childhood, is beautiful in spring.",
-                    "D. Dr. Smith, whom we met yesterday, specializes in neurology.",
-                    "E. The Eiffel Tower, which is in Paris, is an iconic landmark."
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. 'That won the Pulitzer Prize' is a restrictive clause, essential to identifying which book is being discussed. The other options contain nonrestrictive clauses (set off by commas) that provide additional but nonessential information."
-            },
-            {
-                question: "The phrase 'the banality of evil' is associated with:",
-                options: [
-                    "A. Hannah Arendt's analysis of Adolf Eichmann",
-                    "B. Friedrich Nietzsche's concept of morality",
-                    "C. Sigmund Freud's theory of the unconscious",
-                    "D. Karl Marx's critique of capitalism",
-                    "E. Michel Foucault's theory of power"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. Hannah Arendt coined this phrase in her report on the trial of Nazi official Adolf Eichmann, describing how ordinary people can commit atrocities through thoughtlessness and conformity."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct subject-verb agreement with collective nouns?",
-                options: [
-                    "A. The committee are divided in their opinions.",
-                    "B. The team has won its last three games.",
-                    "C. The jury were unanimous in their verdict.",
-                    "D. The staff disagree on the new policy.",
-                    "E. Both B and D are correct"
-                ],
-                correctAnswer: 4,
-                explanation: "The correct answer is E. Both B and D are correct. In American English, collective nouns typically take singular verbs when the group acts as a unit ('the team has') but can take plural verbs when emphasizing individual members ('the staff disagree'). A and C would be more common in British English."
-            },
-            {
-                question: "The literary device used in the phrase 'The stars danced playfully in the moonlit sky' is:",
-                options: [
-                    "A. Simile",
-                    "B. Metaphor",
-                    "C. Personification",
-                    "D. Hyperbole",
-                    "E. Allusion"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. Personification is giving human characteristics to non-human things, as in stars 'dancing playfully,' which are human actions attributed to celestial bodies."
-            },
-            {
-                question: "Which of the following sentences contains a correctly punctuated parenthetical expression?",
-                options: [
-                    "A. The results therefore, were not surprising.",
-                    "B. She was however, unaware of the changes.",
-                    "C. The project, on the other hand was completed on time.",
-                    "D. His conclusion, nevertheless, was well supported.",
-                    "E. We decided moreover to expand our research."
-                ],
-                correctAnswer: 3,
-                explanation: "The correct answer is D. 'Nevertheless' is correctly set off by commas as a parenthetical expression. A and B are missing the first comma; C is missing the second comma; E needs commas around 'moreover.'"
-            },
-            {
-                question: "The term 'heteroglossia' in literary theory refers to:",
-                options: [
-                    "A. The use of multiple languages in a text",
-                    "B. The coexistence of diverse voices or speech styles in a narrative",
-                    "C. The study of ancient writing systems",
-                    "D. The mixing of genres in postmodern literature",
-                    "E. The psychological concept of multiple personalities"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. Coined by Mikhail Bakhtin, heteroglossia refers to the multiplicity of social voices and individual speech styles that interact within a narrative, representing different worldviews."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of the past perfect tense?",
-                options: [
-                    "A. By the time we arrived, the movie already started.",
-                    "B. She had finished her homework before her friends came over.",
-                    "C. I was reading the book when the phone rang.",
-                    "D. They have lived here since 2010.",
-                    "E. We ate dinner and then watched a movie."
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. The past perfect ('had finished') correctly shows an action completed before another past action ('came'). A should use 'had already started'; C is past continuous; D is present perfect; E is simple past sequence."
-            },
-            {
-                question: "The rhetorical strategy of 'apophasis' involves:",
-                options: [
-                    "A. Repeating words at the beginning of successive clauses",
-                    "B. Asking rhetorical questions",
-                    "C. Mentioning something by saying you won't mention it",
-                    "D. Addressing an absent person or abstract concept",
-                    "E. Creating a list of three parallel elements"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. Apophasis is bringing up a subject by denying that it should be brought up, as in 'I won't mention his criminal record,' which actually does mention it."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of the subjunctive mood in a conditional statement?",
-                options: [
-                    "A. If I was rich, I would travel the world.",
-                    "B. If she was here, she would know what to do.",
-                    "C. If he were taller, he could reach the shelf.",
-                    "D. If we was faster, we might have caught the train.",
-                    "E. If they was honest, they would admit their mistake."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. In hypothetical or contrary-to-fact conditionals, the subjunctive 'were' is correct for all persons ('if he were'). The other options incorrectly use 'was' or 'was' in plural forms."
-            },
-            {
-                question: "The term 'ekphrasis' in literary studies refers to:",
-                options: [
-                    "A. The use of archaic language",
-                    "B. A vivid description of a work of art",
-                    "C. The repetition of vowel sounds",
-                    "D. A poem mourning someone's death",
-                    "E. The substitution of a mild term for a harsh one"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. Ekphrasis is a vivid, often dramatic, verbal description of a visual work of art, attempting to translate visual art into poetry or prose."
-            },
-            {
-                question: "Which of the following sentences contains a correctly punctuated nonrestrictive clause?",
-                options: [
-                    "A. Students who cheat on exams face serious consequences.",
-                    "B. The car that was parked illegally was towed.",
-                    "C. My sister, who lives in Boston, is a doctor.",
-                    "D. The book which is on the table belongs to me.",
-                    "E. People whose taxes are overdue will be fined."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. The clause 'who lives in Boston' is nonrestrictive (providing extra information about a clearly identified sister) and is correctly set off by commas. A, B, and E contain restrictive clauses; D should use 'that' for a restrictive clause or add commas if nonrestrictive."
-            },
-            {
-                question: "The concept of 'the death of the author' is associated with:",
-                options: [
-                    "A. Roland Barthes",
-                    "B. Jacques Derrida",
-                    "C. Michel Foucault",
-                    "D. Jean-Paul Sartre",
-                    "E. Julia Kristeva"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. Roland Barthes's essay 'The Death of the Author' argues against traditional literary criticism's practice of interpreting meaning through the author's biography or intentions, focusing instead on the reader's role in creating meaning."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of the passive voice?",
-                options: [
-                    "A. The experiment was conducted by the research team.",
-                    "B. The research team was conducted the experiment.",
-                    "C. The experiment conducted by the research team.",
-                    "D. By the research team the experiment was conducted.",
-                    "E. Conducted by the research team was the experiment."
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. This is a grammatically correct passive construction with the past participle 'conducted' and the agent 'by the research team.' B is grammatically incorrect; C is a fragment; D and E are awkward inversions."
-            },
-            {
-                question: "The term 'mise en abyme' in literary theory refers to:",
-                options: [
-                    "A. A story within a story",
-                    "B. The descent into madness of a character",
-                    "C. A technique of infinite regression where a work contains a smaller version of itself",
-                    "D. The moment of crisis in a plot",
-                    "E. The repetition of a symbolic element throughout a text"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. Mise en abyme (French for 'placed into abyss') is a formal technique where an image contains a smaller copy of itself, potentially recurring infinitely, often used in literature when a story contains a similar story within it."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of 'lie' vs. 'lay'?",
-                options: [
-                    "A. I'm going to lay down for a nap.",
-                    "B. The books have laid on the table all week.",
-                    "C. She lied the baby in the crib gently.",
-                    "D. Yesterday he lay on the beach all afternoon.",
-                    "E. The chickens are lying eggs every morning."
-                ],
-                correctAnswer: 3,
-                explanation: "The correct answer is D. 'Lay' is correct here as the past tense of 'lie' (to recline). A should be 'lie' (present tense of to recline); B should be 'lain' (past participle of 'lie'); C should be 'laid' (past tense of 'lay' meaning to place); E should be 'laying' (present participle of 'lay' meaning to produce eggs)."
-            },
-            {
-                question: "The rhetorical strategy of 'praeteritio' is most similar to:",
-                options: [
-                    "A. Hyperbole",
-                    "B. Apophasis",
-                    "C. Anaphora",
-                    "D. Metonymy",
-                    "E. Synecdoche"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. Praeteritio (also called paralipsis) is a form of apophasis where one emphasizes something by professing to omit it, similar to 'I won't mention his past failures' while actually mentioning them."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of the Oxford comma?",
-                options: [
-                    "A. We invited the strippers, JFK and Stalin.",
-                    "B. For breakfast I had eggs, toast and orange juice.",
-                    "C. The flag is red, white, and blue.",
-                    "D. She studied math, science and art history.",
-                    "E. Both A and C demonstrate correct use"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. The Oxford comma (before 'and' in a list) is used correctly here. A is ambiguous without the Oxford comma (are JFK and Stalin the strippers?); B and D omit the Oxford comma; E is incorrect because A demonstrates why the Oxford comma is needed."
-            },
-            {
-                question: "The term 'chiaroscuro' in literary analysis refers to:",
-                options: [
-                    "A. The contrast between light and dark in a narrative",
-                    "B. The use of color symbolism",
-                    "C. The interplay of different narrative voices",
-                    "D. The circular structure of a plot",
-                    "E. The juxtaposition of comic and tragic elements"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. Borrowed from visual art, chiaroscuro in literature refers to the strong contrast between light and dark, often used metaphorically to represent moral or thematic oppositions."
-            },
-            {
-                question: "Which of the following sentences contains a correctly punctuated conjunctive adverb?",
-                options: [
-                    "A. The results were inconclusive; therefore more research is needed.",
-                    "B. The data was corrupted, however we managed to recover most files.",
-                    "C. She didn't study for the exam; nevertheless, she passed with high marks.",
-                    "D. We wanted to leave early but, unfortunately our flight was delayed.",
-                    "E. The project was difficult, indeed it was the hardest we've ever done."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. 'Nevertheless' is correctly preceded by a semicolon and followed by a comma when connecting two independent clauses. A needs a comma after 'therefore'; B needs a semicolon before 'however'; D should have a comma before 'but' and after 'unfortunately'; E needs a semicolon before 'indeed.'"
-            },
-            {
-                question: "The concept of 'différance' is central to the work of:",
-                options: [
-                    "A. Jacques Derrida",
-                    "B. Michel Foucault",
-                    "C. Jean Baudrillard",
-                    "D. Gilles Deleuze",
-                    "E. Julia Kristeva"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. Différance is a key concept in Derrida's deconstruction, combining the French words for 'to differ' and 'to defer,' suggesting that meaning is both postponed and arises from differences between terms."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct pronoun-antecedent agreement with indefinite pronouns?",
-                options: [
-                    "A. Each of the students must submit their own work.",
-                    "B. Everybody has his or her own opinion about the matter.",
-                    "C. Someone left their notebook in the classroom.",
-                    "D. Neither of the candidates presented themselves well.",
-                    "E. All of the above are correct in modern usage"
-                ],
-                correctAnswer: 4,
-                explanation: "The correct answer is E. While traditional grammar prefers singular pronouns with indefinite pronouns (as in B), modern usage increasingly accepts singular 'they/their' (as in A and C) for gender neutrality, and plural agreement is sometimes used with 'neither' (D) when focusing on the individuals."
-            },
-            {
-                question: "The literary term 'peripeteia' refers to:",
-                options: [
-                    "A. The emotional release experienced by the audience",
-                    "B. The moment of recognition or discovery",
-                    "C. A sudden reversal of fortune or circumstances",
-                    "D. The fatal flaw in a tragic hero",
-                    "E. The chorus's commentary on the action"
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. Peripeteia is a term from Aristotle's Poetics referring to a sudden reversal of circumstances or fortune, crucial in tragedy where it often marks the protagonist's downfall."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of 'affect' vs. 'effect'?",
-                options: [
-                    "A. The new policy will effect all employees starting Monday.",
-                    "B. Her speech had a profound affect on the audience.",
-                    "C. The medication may effect your ability to concentrate.",
-                    "D. The weather could seriously affect our travel plans.",
-                    "E. We're still waiting to see if the changes take affect."
-                ],
-                correctAnswer: 3,
-                explanation: "The correct answer is D. 'Affect' is correctly used here as a verb meaning to influence. A should use 'affect' (to influence); B should use 'effect' (a result); C should use 'affect' (to influence); E should use 'effect' (result)."
-            },
-            {
-                question: "The concept of 'interpellation' in critical theory refers to:",
-                options: [
-                    "A. The process by which ideology constitutes individuals as subjects",
-                    "B. The questioning of witnesses in legal proceedings",
-                    "C. The insertion of personal commentary in a narrative",
-                    "D. The translation of texts between languages",
-                    "E. The interruption of one text by another"
-                ],
-                correctAnswer: 0,
-                explanation: "The correct answer is A. In Althusser's Marxist theory, interpellation describes how ideology 'hails' or calls individuals, transforming them into subjects who recognize themselves in ideological constructs."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of 'that' vs. 'which'?",
-                options: [
-                    "A. The book which I borrowed from you is fascinating.",
-                    "B. The car that is parked in the driveway needs washing.",
-                    "C. The theory, that Einstein proposed, revolutionized physics.",
-                    "D. The house which roof was damaged in the storm is being repaired.",
-                    "E. All of the above are correct"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. 'That' is correctly used for a restrictive clause essential to the meaning. A could use 'that' for a restrictive clause or add commas if nonrestrictive; C should remove commas or use 'which'; D should use 'whose' instead of 'which.'"
-            },
-            {
-                question: "The term 'liminal space' in literary analysis refers to:",
-                options: [
-                    "A. The margins of a printed page",
-                    "B. A threshold or in-between state",
-                    "C. The physical setting of a narrative",
-                    "D. The time period before a story begins",
-                    "E. The blank space between chapters"
-                ],
-                correctAnswer: 1,
-                explanation: "The correct answer is B. A liminal space is a transitional or threshold space, neither here nor there, often carrying symbolic meaning in literature (e.g., doorways, twilight, waiting rooms)."
-            },
-            {
-                question: "Which of the following sentences demonstrates correct use of 'fewer' vs. 'less'?",
-                options: [
-                    "A. There were less people at the concert than expected.",
-                    "B. She has fewer patience with incompetence than her colleague.",
-                    "C. Fewer than twenty students signed up for the workshop.",
-                    "D. We need to consume less calories to lose weight.",
-                    "E. The recipe calls for fewer than two tablespoons of sugar."
-                ],
-                correctAnswer: 2,
-                explanation: "The correct answer is C. 'Fewer' is correct for countable items (students). A should be 'fewer' (people are countable); B should be 'less' (patience is uncountable); D should be 'fewer' (calories are countable); E should be 'less' (sugar measured in tablespoons is uncountable)."
-            }
+                    {
+                        question: "Which sentence is in the present perfect continuous tense?",
+                        options: [
+                            "A. I have finished my homework.",
+                            "B. I have been finishing my homework.",
+                            "C. I had finished my homework.",
+                            "D. I will have finished my homework.",
+                            "E. I am finishing my homework."
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'I have been finishing my homework.'. This sentence uses the present perfect continuous tense (have been + verb-ing)."
+                    },
+                    {
+                        question: "What is the correct passive form of: 'Someone stole my wallet.'?",
+                        options: [
+                            "A. My wallet was stolen by someone.",
+                            "B. My wallet is stolen by someone.",
+                            "C. My wallet has been stolen by someone.",
+                            "D. My wallet had been stolen by someone.",
+                            "E. My wallet will be stolen by someone."
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'My wallet was stolen by someone.'. The active sentence is in simple past tense ('stole'), so the passive should be 'was/were + past participle'."
+                    },
+                    {
+                        question: "Which sentence correctly uses the third conditional?",
+                        options: [
+                            "A. If I study, I will pass the exam.",
+                            "B. If I studied, I would pass the exam.",
+                            "C. If I had studied, I would have passed the exam.",
+                            "D. If I study, I would pass the exam.",
+                            "E. If I had studied, I will pass the exam."
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'If I had studied, I would have passed the exam.'. The third conditional is used for hypothetical situations in the past (if + past perfect, would have + past participle)."
+                    },
+                    {
+                        question: "What is the correct reported speech for: 'She said, \"I am going to the market.\"'?",
+                        options: [
+                            "A. She said that she is going to the market.",
+                            "B. She said that she was going to the market.",
+                            "C. She said that she has been going to the market.",
+                            "D. She said that she will be going to the market.",
+                            "E. She said that she goes to the market."
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'She said that she was going to the market.'. When reporting speech, present continuous ('am going') changes to past continuous ('was going')."
+                    },
+                    {
+                        question: "Which sentence uses 'despite' correctly?",
+                        options: [
+                            "A. Despite it was raining, we went out.",
+                            "B. Despite of the rain, we went out.",
+                            "C. Despite the rain, we went out.",
+                            "D. Despite to the rain, we went out.",
+                            "E. Despite raining, we went out."
+                        ],
+                        correctAnswer: 2,
+                        explanation: "The correct answer is 'Despite the rain, we went out.'. 'Despite' is followed directly by a noun phrase ('the rain'), not by 'of' or a clause."
+                    },
+                    {
+                        question: "What is the correct form of the verb in this sentence: 'Neither John nor his friends _____ going to the party.'?",
+                        options: [
+                            "A. is",
+                            "B. are",
+                            "C. was",
+                            "D. be",
+                            "E. has"
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'are'. With 'neither...nor', the verb agrees with the noun closest to it ('friends' is plural, so we use 'are')."
+                    },
+                    {
+                        question: "Which sentence correctly uses an inversion for emphasis?",
+                        options: [
+                            "A. Never I have seen such a beautiful sunset.",
+                            "B. Never have I seen such a beautiful sunset.",
+                            "C. Never I seen have such a beautiful sunset.",
+                            "D. Never I have seen such a beautiful sunset have.",
+                            "E. Never seen I have such a beautiful sunset."
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'Never have I seen such a beautiful sunset.'. When beginning with a negative adverb like 'never', we invert the subject and auxiliary verb."
+                    },
+                    {
+                        question: "What is the correct phrasal verb to complete this sentence: 'Please _____ your shoes before entering the house.'?",
+                        options: [
+                            "A. take off",
+                            "B. take on",
+                            "C. take up",
+                            "D. take in",
+                            "E. take over"
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'take off'. 'Take off' means to remove (clothing, shoes, etc.)."
+                    },
+                    {
+                        question: "Which sentence correctly uses a defining relative clause?",
+                        options: [
+                            "A. The man, who lives next door, is a doctor.",
+                            "B. The man who lives next door is a doctor.",
+                            "C. The man, that lives next door, is a doctor.",
+                            "D. The man which lives next door is a doctor.",
+                            "E. The man he lives next door is a doctor."
+                        ],
+                        correctAnswer: 1,
+                        explanation: "The correct answer is 'The man who lives next door is a doctor.'. This is a defining relative clause (no commas) that identifies which man we're talking about."
+                    },
+                    {
+                        question: "What is the correct preposition to complete this sentence: 'I'm not very good _____ math.'?",
+                        options: [
+                            "A. at",
+                            "B. in",
+                            "C. on",
+                            "D. for",
+                            "E. with"
+                        ],
+                        correctAnswer: 0,
+                        explanation: "The correct answer is 'at'. The correct preposition with 'good' in this context is 'at' (good at something)."
+                    }
                 ]
             }
         };
 
         // Motivational messages based on score
         const MOTIVATIONAL_MESSAGES = {
-            '90-100': 'Excellent! You have demonstrated outstanding English proficiency. Keep up the great work!',
-            '80-89': 'Very good! You have a strong command of English. Continue to practice and improve.',
-            '70-79': 'Good job! You have a solid understanding of English. Keep learning and practicing.',
-            '60-69': 'Fair result. You have basic English skills. Focus on areas that need improvement.',
-            '50-59': 'You have some understanding of English basics. Regular practice will help you improve.',
-            '0-49': "Don't give up! Use this result to identify areas for improvement and keep practicing English."
+            '90-100': 'Sempurna! Anda sangat luar biasa dalam menguasai materi Bahasa Inggris. Pertahankan prestasi ini.',
+            '80-89': 'Hasil yang sangat baik! Anda telah menunjukkan pemahaman yang mendalam tentang Bahasa Inggris.',
+            '70-79': 'Kerja bagus! Anda memiliki pemahaman yang baik tentang materi Bahasa Inggris ini.',
+            '60-69': 'Hasil yang cukup baik. Tingkatkan lagi pemahaman Anda untuk hasil yang lebih baik.',
+            '50-59': 'Anda sudah memahami dasar-dasarnya. Terus berlatih untuk meningkatkan kemampuan Bahasa Inggris.',
+            '0-49': 'Jangan menyerah! Gunakan hasil ini sebagai motivasi untuk belajar Bahasa Inggris lebih giat lagi.'
         };
         
         // Initialize the application
@@ -3582,7 +2091,7 @@
                 radio.addEventListener('change', showGradeSelection);
             });
             
-            document.getElementById('save-participant-btn').addEventListener('click', startExam);
+            document.getElementById('save-participant-btn').addEventListener('click', validateAndStartExam);
             document.getElementById('finish-exam-btn').addEventListener('click', finishExam);
             document.getElementById('skip-question-btn').addEventListener('click', skipQuestion);
             document.getElementById('unanswered-btn').addEventListener('click', showUnansweredQuestions);
@@ -3604,22 +2113,49 @@
             document.getElementById('fullname').addEventListener('input', function() {
                 // Convert input to uppercase automatically
                 this.value = this.value.toUpperCase();
+                validateField(this, 'fullname-error', /^[A-Za-z ]+$/, "Nama lengkap harus diisi dan hanya boleh mengandung huruf");
                 checkParticipantFormValidity();
             });
             
-            document.getElementById('school-name').addEventListener('input', checkParticipantFormValidity);
-            document.getElementById('student-id').addEventListener('input', checkParticipantFormValidity);
+            document.getElementById('school-name').addEventListener('input', function() {
+                validateField(this, 'school-error', /.+/, "Nama sekolah harus diisi");
+                checkParticipantFormValidity();
+            });
+            
+            document.getElementById('student-id').addEventListener('input', function() {
+                validateField(this, 'nis-error', /^[0-9]+$/, "NIS harus diisi dan hanya boleh mengandung angka");
+                checkParticipantFormValidity();
+            });
+            
             document.querySelectorAll('input[name="purpose"]').forEach(radio => {
-                radio.addEventListener('change', checkParticipantFormValidity);
+                radio.addEventListener('change', function() {
+                    document.getElementById('purpose-error').style.display = 'none';
+                    document.getElementById('purpose-radio-group').classList.remove('radio-group-error');
+                    checkParticipantFormValidity();
+                });
             });
+            
             document.querySelectorAll('input[name="level"]').forEach(radio => {
-                radio.addEventListener('change', checkParticipantFormValidity);
+                radio.addEventListener('change', function() {
+                    document.getElementById('level-error').style.display = 'none';
+                    document.getElementById('level-radio-group').classList.remove('radio-group-error');
+                    checkParticipantFormValidity();
+                });
             });
+            
             document.querySelectorAll('input[name="grade"]').forEach(radio => {
-                radio.addEventListener('change', checkParticipantFormValidity);
+                radio.addEventListener('change', function() {
+                    document.getElementById('grade-error').style.display = 'none';
+                    checkParticipantFormValidity();
+                });
             });
+            
             document.querySelectorAll('input[name="subject"]').forEach(radio => {
-                radio.addEventListener('change', checkParticipantFormValidity);
+                radio.addEventListener('change', function() {
+                    document.getElementById('subject-error').style.display = 'none';
+                    document.getElementById('subject-radio-group').classList.remove('radio-group-error');
+                    checkParticipantFormValidity();
+                });
             });
 
             // Admin panel toggle switches
@@ -3640,6 +2176,9 @@
             document.getElementById('edit-selected-participants').addEventListener('click', editSelectedParticipants);
             document.getElementById('delete-selected-participants').addEventListener('click', deleteSelectedParticipants);
             document.getElementById('validate-certificate-btn').addEventListener('click', validateCertificate);
+            document.getElementById('export-csv-btn').addEventListener('click', exportToCSV);
+            document.getElementById('export-json-btn').addEventListener('click', exportToJSON);
+            document.getElementById('export-excel-btn').addEventListener('click', exportToExcel);
             
             // Search functionality
             document.getElementById('participant-search').addEventListener('input', searchParticipants);
@@ -3653,9 +2192,6 @@
                 radio.addEventListener('change', showEditGradeSelection);
             });
             
-            // Load participants data for admin panel
-            loadParticipantsData();
-            
             // Auto uppercase for edit fullname field
             document.getElementById('edit-fullname').addEventListener('input', function() {
                 this.value = this.value.toUpperCase();
@@ -3666,13 +2202,6 @@
         function loadAdminSettings() {
             // Load exam duration
             document.getElementById('exam-duration').value = adminSettings.examDuration;
-            
-            // Load question count
-            document.getElementById('question-count').value = adminSettings.questionCount;
-            
-            // Load randomize questions setting
-            document.getElementById('randomize-questions').checked = adminSettings.randomizeQuestions;
-            document.getElementById('randomize-status').textContent = adminSettings.randomizeQuestions ? 'Aktif' : 'Nonaktif';
             
             // Load greeting message
             document.getElementById('greeting-message-input').value = adminSettings.greetingMessage;
@@ -3689,11 +2218,11 @@
         }
         
         function saveParticipantsData() {
-            localStorage.setItem('participantsData', JSON.stringify(participantsData));
+            localStorage.setItem('pergunuParticipantsData', JSON.stringify(participantsData));
         }
         
         function saveAdminSettings() {
-            localStorage.setItem('adminSettings', JSON.stringify(adminSettings));
+            localStorage.setItem('pergunuAdminSettings', JSON.stringify(adminSettings));
         }
         
         function handleLogin() {
@@ -3793,42 +2322,92 @@
             container.appendChild(radioLabel);
         }
         
+        function validateField(field, errorId, pattern, errorMessage) {
+            const errorElement = document.getElementById(errorId);
+            
+            if (!field.value.trim() || !pattern.test(field.value.trim())) {
+                field.classList.add('input-error');
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                field.classList.remove('input-error');
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+        
         function checkParticipantFormValidity() {
             let isValid = true;
             
-            // Check common fields
-            const fullname = document.getElementById('fullname').value.trim();
-            if (!fullname || !/^[A-Za-z ]+$/.test(fullname)) {
+            // Validate fullname
+            const fullname = document.getElementById('fullname');
+            if (!validateField(fullname, 'fullname-error', /^[A-Za-z ]+$/, "Nama lengkap harus diisi dan hanya boleh mengandung huruf")) {
                 isValid = false;
             }
             
-            // Check student fields
-            if (!document.getElementById('school-name').value.trim()) {
+            // Validate school name
+            const schoolName = document.getElementById('school-name');
+            if (!validateField(schoolName, 'school-error', /.+/, "Nama sekolah harus diisi")) {
                 isValid = false;
             }
             
-            const studentId = document.getElementById('student-id').value.trim();
-            if (!studentId || !/^[0-9]+$/.test(studentId)) {
+            // Validate student ID
+            const studentId = document.getElementById('student-id');
+            if (!validateField(studentId, 'nis-error', /^[0-9]+$/, "NIS harus diisi dan hanya boleh mengandung angka")) {
                 isValid = false;
             }
             
+            // Validate purpose
             if (!document.querySelector('input[name="purpose"]:checked')) {
+                document.getElementById('purpose-error').style.display = 'block';
+                document.getElementById('purpose-radio-group').classList.add('radio-group-error');
                 isValid = false;
             }
             
+            // Validate level
             if (!document.querySelector('input[name="level"]:checked')) {
+                document.getElementById('level-error').style.display = 'block';
+                document.getElementById('level-radio-group').classList.add('radio-group-error');
                 isValid = false;
             }
             
+            // Validate grade
             if (!document.querySelector('input[name="grade"]:checked')) {
+                document.getElementById('grade-error').style.display = 'block';
                 isValid = false;
             }
             
+            // Validate subject
             if (!document.querySelector('input[name="subject"]:checked')) {
+                document.getElementById('subject-error').style.display = 'block';
+                document.getElementById('subject-radio-group').classList.add('radio-group-error');
                 isValid = false;
             }
             
             document.getElementById('save-participant-btn').disabled = !isValid;
+            return isValid;
+        }
+        
+        function validateAndStartExam() {
+            if (checkParticipantFormValidity()) {
+                startExam();
+            } else {
+                // Show warning notification
+                const warning = document.getElementById('form-warning');
+                warning.style.display = 'block';
+                
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    warning.style.display = 'none';
+                }, 5000);
+                
+                // Scroll to first error
+                const firstError = document.querySelector('.input-error, .radio-group-error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         }
         
         function startExam() {
@@ -3842,22 +2421,23 @@
                 subject: document.querySelector('input[name="subject"]:checked')?.value,
                 school: document.getElementById('school-name')?.value.trim(),
                 studentId: document.getElementById('student-id')?.value.trim(),
-                examDate: new Date().toISOString()
+                examDate: new Date().toISOString(),
+                deviceInfo: getDeviceInfo()
             };
             
             // Load questions based on level - hanya Bahasa Inggris
             if (participantData.level && QUESTION_BANK[participantData.level]['Bahasa Inggris']) {
-                questions = QUESTION_BANK[participantData.level]['Bahasa Inggris'];
+                // Acak urutan soal
+                const originalQuestions = QUESTION_BANK[participantData.level]['Bahasa Inggris'];
+                questions = shuffleArray(originalQuestions);
+                
+                // Simpan urutan soal yang diacak
+                questionOrder = questions.map((_, index) => index);
             } else {
-                // Default questions
-                questions = QUESTION_BANK['SD']['Bahasa Inggris'];
-            }
-            
-            // Randomize questions if setting is enabled
-            if (adminSettings.randomizeQuestions) {
-                questions = shuffleArray(questions).slice(0, adminSettings.questionCount);
-            } else {
-                questions = questions.slice(0, adminSettings.questionCount);
+                // Default questions (SD)
+                const originalQuestions = QUESTION_BANK['SD']['Bahasa Inggris'];
+                questions = shuffleArray(originalQuestions);
+                questionOrder = questions.map((_, index) => index);
             }
             
             // Initialize exam data
@@ -3891,6 +2471,28 @@
             }, 500);
         }
         
+        // Fungsi untuk mendapatkan informasi perangkat
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let deviceType = 'Desktop';
+            
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+                deviceType = 'Mobile';
+            } else if (/Tablet|iPad/i.test(userAgent)) {
+                deviceType = 'Tablet';
+            }
+            
+            return {
+                deviceType: deviceType,
+                userAgent: userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                platform: navigator.platform,
+                language: navigator.language
+            };
+        }
+        
+        // Fungsi untuk mengacak array (Fisher-Yates algorithm)
         function shuffleArray(array) {
             const newArray = [...array];
             for (let i = newArray.length - 1; i > 0; i--) {
@@ -3968,8 +2570,9 @@
             currentQuestionIndex = index;
             const question = questions[index];
             
-            // Update question text
-            document.getElementById('question-text').textContent = `Question ${index + 1}: ${question.question}`;
+            // Update question text (tampilkan nomor urut asli dari questionOrder)
+            const originalQuestionNumber = questionOrder[index] + 1;
+            document.getElementById('question-text').textContent = `Soal ${originalQuestionNumber}: ${question.question}`;
             
             // Clear previous image if exists
             const imageContainer = document.getElementById('question-image-container');
@@ -4010,7 +2613,7 @@
                     
                     // Show explanation if answered
                     document.getElementById('explanation-text').style.display = 'block';
-                    document.getElementById('explanation-text').innerHTML = `<strong>Explanation:</strong> ${question.explanation}`;
+                    document.getElementById('explanation-text').innerHTML = `<strong>Penjelasan:</strong> ${question.explanation}`;
                 } else {
                     // Add click event for unanswered questions
                     optionElement.addEventListener('click', function() {
@@ -4073,11 +2676,11 @@
             if (unansweredIndex !== -1) {
                 loadQuestion(unansweredIndex);
             } else {
-                alert('All questions have been answered.');
+                alert('Semua soal sudah dijawab.');
             }
         }
         
-        function finishExam() {
+        async function finishExam() {
             clearInterval(examTimer);
             
             // Calculate unanswered questions
@@ -4086,16 +2689,56 @@
             // Generate certificate code
             const certificateCode = generateUniqueCode();
             
-            // Add participant to data store
+            // Calculate score
             const score = Math.round((examData.correct / questions.length) * 100);
-            participantsData.push({
+            
+            // Add participant to data store
+            const participantRecord = {
                 ...participantData,
                 score: score,
                 examDate: new Date().toISOString(),
-                certificateCode: certificateCode
-            });
-            saveParticipantsData();
+                certificateCode: certificateCode,
+                answers: examData.answers,
+                questions: questions.map((q, i) => ({
+                    question: q.question,
+                    selectedAnswer: examData.answers[i],
+                    correctAnswer: q.correctAnswer,
+                    explanation: q.explanation
+                })),
+                deviceInfo: participantData.deviceInfo,
+                totalQuestions: questions.length,
+                correctAnswers: examData.correct,
+                wrongAnswers: examData.wrong,
+                unanswered: examData.unanswered
+            };
             
+            // Simpan ke Google Sheets dan localStorage
+            try {
+                // First try to save to Google Sheets
+                const saveResult = await saveToGoogleSheets(participantRecord);
+                
+                if (saveResult.success) {
+                    // If successful, save to localStorage as well
+                    participantsData.push(participantRecord);
+                    saveParticipantsData();
+                    
+                    // Show results
+                    showResults(participantRecord, certificateCode);
+                } else {
+                    // If Google Sheets fails, fallback to localStorage
+                    console.error('Failed to save to Google Sheets:', saveResult.message);
+                    saveToLocalStorage(participantRecord);
+                    showResults(participantRecord, certificateCode);
+                }
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+                // Fallback to localStorage
+                saveToLocalStorage(participantRecord);
+                showResults(participantRecord, certificateCode);
+            }
+        }
+        
+        function showResults(participantRecord, certificateCode) {
             // Hide exam screen with slide out animation
             document.getElementById('exam-screen').classList.add('slide-out');
             
@@ -4107,7 +2750,7 @@
                 currentScreen = 'results';
                 
                 // Display results
-                displayResults();
+                displayResults(participantRecord);
                 
                 // Generate certificate
                 generateCertificate(certificateCode);
@@ -4120,20 +2763,78 @@
                 certificateSound.play().catch(e => console.log("Certificate sound prevented:", e));
             }, 500);
         }
-        
-        function displayResults() {
-            document.getElementById('result-name').textContent = participantData.fullname;
+
+        // Fungsi untuk mengirim data ke Google Sheets
+        async function saveToGoogleSheets(participantData) {
+            const dataToSend = {
+                action: 'saveParticipant',
+                data: {
+                    fullname: participantData.fullname,
+                    status: participantData.status,
+                    purpose: participantData.purpose,
+                    level: participantData.level,
+                    grade: participantData.grade,
+                    subject: participantData.subject,
+                    school: participantData.school,
+                    studentId: participantData.studentId,
+                    score: participantData.score,
+                    certificateCode: participantData.certificateCode,
+                    examDate: participantData.examDate,
+                    deviceType: participantData.deviceInfo?.deviceType || 'Unknown',
+                    totalQuestions: participantData.totalQuestions,
+                    correctAnswers: participantData.correctAnswers,
+                    wrongAnswers: participantData.wrongAnswers,
+                    unanswered: participantData.unanswered
+                }
+            };
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+                throw error;
+            }
+        }
+
+        function saveToLocalStorage(participantData) {
+            const participantRecord = {
+                ...participantData,
+                totalQuestions: questions.length,
+                correctAnswers: examData.correct,
+                wrongAnswers: examData.wrong,
+                unanswered: examData.unanswered
+            };
+            
+            participantsData.push(participantRecord);
+            saveParticipantsData();
+        }
+            
+        function displayResults(participantRecord) {
+            document.getElementById('result-name').textContent = participantRecord.fullname;
             document.getElementById('result-status').textContent = 'Pelajar';
-            document.getElementById('result-level').textContent = participantData.level || '-';
-            document.getElementById('result-grade').textContent = participantData.grade ? `Kelas ${participantData.grade}` : '-';
-            document.getElementById('result-subject').textContent = participantData.subject || '-';
-            document.getElementById('total-questions').textContent = questions.length;
-            document.getElementById('correct-answers').textContent = examData.correct;
-            document.getElementById('wrong-answers').textContent = examData.wrong;
-            document.getElementById('unanswered-questions').textContent = examData.unanswered;
+            document.getElementById('result-level').textContent = participantRecord.level || '-';
+            document.getElementById('result-grade').textContent = participantRecord.grade ? `Kelas ${participantRecord.grade}` : '-';
+            document.getElementById('result-subject').textContent = participantRecord.subject || '-';
+            document.getElementById('total-questions').textContent = participantRecord.totalQuestions;
+            document.getElementById('correct-answers').textContent = participantRecord.correctAnswers;
+            document.getElementById('wrong-answers').textContent = participantRecord.wrongAnswers;
+            document.getElementById('unanswered-questions').textContent = participantRecord.unanswered;
             
             // Calculate score (percentage)
-            const score = Math.round((examData.correct / questions.length) * 100);
+            const score = Math.round((participantRecord.correctAnswers / participantRecord.totalQuestions) * 100);
             document.getElementById('exam-score').textContent = `${score}%`;
         }
         
@@ -4162,30 +2863,34 @@
                 }
             }
             
+            // Format NIS and school name for certificate code
+            const formattedNIS = participantData.studentId ? participantData.studentId : '0000';
+            const formattedSchool = participantData.school ? participantData.school.replace(/\s+/g, '-').toUpperCase().substring(0, 10) : 'SEKOLAH';
+            
             // Create certificate HTML
             const certificate = document.createElement('div');
             certificate.className = 'certificate';
             
             certificate.innerHTML = `
                 <div class="certificate-content">
-                    <h1 class="certificate-title">ENGLISH PROFICIENCY CERTIFICATE</h1>
-                    <p class="certificate-code">${formatName(participantData.fullname)}/STUDENT/${participantData.level || 'GENERAL'}/ENGLISH/${dateString}/${certificateCode}/PERGUNU-STB</p>
-                    <p>Awarded To</p>
+                    <h1 class="certificate-title">SERTIFIKAT PRESTASI</h1>
+                    <p class="certificate-code">${formatName(participantData.fullname)}/${formattedNIS}/${formattedSchool}/${participantData.level || 'UMUM'}/${participantData.subject || 'UMUM'}/${dateString}/${certificateCode}/PERGUNU-STB</p>
+                    <p>Diberikan Kepada</p>
                     <h2 class="certificate-recipient">${formatName(participantData.fullname)}</h2>
                     <p class="certificate-body">
-                        For Outstanding Participation & Achievement In<br>
-                        PERGUNU Situbondo English Test
+                        Atas Partisipasi & Pencapaian Luar Biasa Dalam<br>
+                        Ujian Bahasa Inggris Pergunu Situbondo
                     </p>
                     <p class="certificate-body">
-                        This certificate is awarded in recognition of dedication in mastering English language skills 
-                        and demonstrates the recipient's commitment to language learning.
+                        Sebagai penghargaan atas dedikasi dalam memahami materi Bahasa Inggris dan meningkatkan kemampuan berbahasa, 
+                        sertifikat ini diberikan sebagai motivasi untuk terus berkembang dalam pembelajaran bahasa asing.
                     </p>
-                    <div class="certificate-score">Score: ${score}%</div>
+                    <div class="certificate-score">Nilai: ${score}%</div>
                     <p class="certificate-motivation">${motivation}</p>
                     <div class="certificate-footer">
-                        <p>Issued in: Situbondo, ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        <p>Ditetapkan di: Situbondo, ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                         <div class="certificate-signature">
-                            <p>Chairman of PERGUNU Situbondo</p>
+                            <p>Ketua Pergunu Situbondo</p>
                             <p><strong>${adminSettings.chairmanName}</strong></p>
                         </div>
                         <img src="https://raw.githubusercontent.com/pergunu/ujian-online/main/assets/images/BARCODE.png" alt="Barcode" class="certificate-barcode">
@@ -4284,6 +2989,8 @@
             if (code === adminSettings.adminCode) {
                 // Show admin panel content
                 document.getElementById('admin-panel-content').style.display = 'block';
+                // Load participants data
+                loadParticipantsData();
             } else {
                 alert('Kode admin salah. Silakan coba lagi.');
             }
@@ -4609,6 +3316,7 @@
                     <p>Mata Ujian: ${participant.subject || '-'}</p>
                     <p>Nilai: ${participant.score}%</p>
                     <p>Tanggal Ujian: ${new Date(participant.examDate).toLocaleDateString('id-ID')}</p>
+                    <p>Perangkat: ${participant.deviceInfo?.deviceType || 'Tidak diketahui'}</p>
                 `;
                 validationResult.style.display = 'block';
             } else {
@@ -4659,13 +3367,9 @@
         
         function saveSettings() {
             const examDuration = parseInt(document.getElementById('exam-duration').value);
-            const questionCount = parseInt(document.getElementById('question-count').value);
-            const randomizeQuestions = document.getElementById('randomize-questions').checked;
             
             // Update admin settings
             adminSettings.examDuration = examDuration;
-            adminSettings.questionCount = questionCount;
-            adminSettings.randomizeQuestions = randomizeQuestions;
             
             // Update subject toggle
             adminSettings.enabledSubjects = {
@@ -4676,6 +3380,93 @@
             saveAdminSettings();
             
             alert('Pengaturan berhasil disimpan!');
+        }
+        
+        function exportToCSV() {
+            if (participantsData.length === 0) {
+                alert('Tidak ada data peserta untuk diekspor');
+                return;
+            }
+            
+            // Create CSV header
+            let csv = 'Nama,NIS,Sekolah,Tingkat,Kelas,Subject,Nilai,Kode Sertifikat,Tanggal Ujian,Jenis Perangkat\n';
+            
+            // Add data rows
+            participantsData.forEach(participant => {
+                csv += `"${participant.fullname}","${participant.studentId || ''}","${participant.school || ''}",`;
+                csv += `"${participant.level || ''}","${participant.grade || ''}","${participant.subject || ''}",`;
+                csv += `"${participant.score}","${participant.certificateCode || ''}","${new Date(participant.examDate).toLocaleString('id-ID')}",`;
+                csv += `"${participant.deviceInfo?.deviceType || 'Tidak diketahui'}"\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `data-peserta-${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function exportToJSON() {
+            if (participantsData.length === 0) {
+                alert('Tidak ada data peserta untuk diekspor');
+                return;
+            }
+            
+            // Create JSON data
+            const jsonData = JSON.stringify(participantsData, null, 2);
+            
+            // Create download link
+            const blob = new Blob([jsonData], { type: 'application/json;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `data-peserta-${new Date().toISOString().slice(0,10)}.json`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function exportToExcel() {
+            if (participantsData.length === 0) {
+                alert('Tidak ada data peserta untuk diekspor');
+                return;
+            }
+            
+            // Prepare data for Excel
+            const excelData = [
+                ['Nama', 'NIS', 'Sekolah', 'Tingkat', 'Kelas', 'Mata Ujian', 'Nilai', 'Kode Sertifikat', 'Tanggal Ujian', 'Jenis Perangkat']
+            ];
+            
+            participantsData.forEach(participant => {
+                excelData.push([
+                    participant.fullname,
+                    participant.studentId || '',
+                    participant.school || '',
+                    participant.level || '',
+                    participant.grade || '',
+                    participant.subject || '',
+                    participant.score,
+                    participant.certificateCode || '',
+                    new Date(participant.examDate).toLocaleString('id-ID'),
+                    participant.deviceInfo?.deviceType || 'Tidak diketahui'
+                ]);
+            });
+            
+            // Create worksheet
+            const ws = XLSX.utils.aoa_to_sheet(excelData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data Peserta");
+            
+            // Export to Excel file
+            XLSX.writeFile(wb, `data-peserta-${new Date().toISOString().slice(0,10)}.xlsx`);
         }
     </script>
 </body>
